@@ -27,6 +27,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 #define R_F D2 // "3A" right motor forwards
 #define R_R D3 // "4A" right motor reverse
 
+// Local PWM range to match what the remote sents
+#define MYPWMRANGE 255
 
 // Set SSID and password for the robot
 const char *ssid = "RobotzRul";
@@ -60,6 +62,9 @@ void setup() {
   digitalWrite(E_L, HIGH);
   digitalWrite(E_R, HIGH);
 
+  // Setup PWM resolution
+  analogWriteRange(MYPWMRANGE);
+
   // Setup access point
   WiFi.softAP(ssid, password);
 
@@ -76,11 +81,11 @@ void loop() {
     Udp.read(packetBuffer, UDP_TX_PACKET_MAX_SIZE);
   }
   
-  digitalWrite(L_F, HIGH);
-  digitalWrite(R_F , HIGH);
+  analogWrite(L_F, 127);
+  analogWrite(R_F , 127);
   delay(2500);
   
-  digitalWrite(L_F, LOW);
-  digitalWrite(R_F, LOW);
+  analogWrite(L_F, 31);
+  analogWrite(R_F, 31);
   delay(2500);
 }
