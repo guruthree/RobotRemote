@@ -15,6 +15,9 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 */
 
+#include <ESP8266WiFi.h>
+
+
 // Pin constants
 #define E_L D8 // "1,2EN" enable driver channels for left motor
 #define E_R D1 // "3,4EN" enable driver channels for right motor
@@ -22,6 +25,12 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 #define L_R D0 // "2A" left motor reverse
 #define R_F D2 // "3A" right motor forwards
 #define R_R D3 // "4A" right motor reverse
+
+
+// Set SSID and password for the robot
+const char *ssid = "RobotzRul";
+const char *password = "omglolwut";
+
 
 // the setup function runs once when you press reset or power the board
 void setup() {
@@ -39,7 +48,12 @@ void setup() {
   // Enable output
   digitalWrite(E_L, HIGH);
   digitalWrite(E_R, HIGH);
+
+  // Setup access point
+  WiFi.softAP(ssid, password);
+  
 }
+
 
 // the loop function runs over and over again forever
 void loop() {
