@@ -15,20 +15,26 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 */
 
+// Pin constants
+#define E_L D8 // "1,2EN" enable driver channels for left motor
+#define E_R D1 // "3,4EN" enable driver channels for right motor
+#define L_F D7 // "1A" left motor forwards
+#define L_R D0 // "2A" left motor reverse
+#define R_F D2 // "3A" right motor forwards
+#define R_R D3 // "4A" right motor reverse
+
 // the setup function runs once when you press reset or power the board
 void setup() {
-  // initialize digital pin LED_BUILTIN as an output.
-  pinMode(D4, OUTPUT); // LED
-  pinMode(D8, OUTPUT); // 1,2 EN LEFT
-  pinMode(D1, OUTPUT); // 3,4 EN RIGHT
-
-  // LEFT WHEEL
-  pinMode(D7, OUTPUT); // 1A (FORWARDS)
-  pinMode(D0, OUTPUT); // 2A (BACKWARDS)
-
-  // RIGHT WHEEL
-  pinMode(D2, OUTPUT); // 3A (FORWARDS)
-  pinMode(D3, OUTPUT); // 4A (BACKWARDS)
+  // Setup output pin directions
+  // Enable pins
+  pinMode(E_L, OUTPUT); // 1,2 EN LEFT
+  pinMode(E_R, OUTPUT); // 3,4 EN RIGHT
+  // Left wheel pins
+  pinMode(L_F, OUTPUT); // 1A (FORWARDS)
+  pinMode(L_R, OUTPUT); // 2A (BACKWARDS)
+  // Right wheel pin
+  pinMode(R_F, OUTPUT); // 3A (FORWARDS)
+  pinMode(R_R, OUTPUT); // 4A (BACKWARDS)
   
   digitalWrite(D8, HIGH);
   digitalWrite(D1, HIGH);
@@ -36,15 +42,11 @@ void setup() {
 
 // the loop function runs over and over again forever
 void loop() {
-  digitalWrite(D4, HIGH);
-  
-  digitalWrite(D7, HIGH);
-  digitalWrite(D2 , HIGH);
-  
+  digitalWrite(L_F, HIGH);
+  digitalWrite(R_F , HIGH);
   delay(2500);
-  digitalWrite(D4, LOW);
   
-  digitalWrite(D7, LOW);
-  digitalWrite(D2, LOW);
+  digitalWrite(L_F, LOW);
+  digitalWrite(R_F, LOW);
   delay(2500);
 }
