@@ -35,9 +35,10 @@ void setup() {
   // Right wheel pin
   pinMode(R_F, OUTPUT); // 3A (FORWARDS)
   pinMode(R_R, OUTPUT); // 4A (BACKWARDS)
-  
-  digitalWrite(D8, HIGH);
-  digitalWrite(D1, HIGH);
+
+  // Enable output
+  digitalWrite(E_L, HIGH);
+  digitalWrite(E_R, HIGH);
 }
 
 // the loop function runs over and over again forever
