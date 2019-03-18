@@ -70,6 +70,12 @@ void setup() {
 
 // the loop function runs over and over again forever
 void loop() {
+  // if there's data available, read a packet
+  int packetSize = Udp.parsePacket();
+  if (packetSize) {
+    Udp.read(packetBuffer, UDP_TX_PACKET_MAX_SIZE);
+  }
+  
   digitalWrite(L_F, HIGH);
   digitalWrite(R_F , HIGH);
   delay(2500);
