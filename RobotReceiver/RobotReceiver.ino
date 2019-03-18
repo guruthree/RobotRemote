@@ -16,6 +16,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 */
 
 #include <ESP8266WiFi.h>
+#include <WiFiUdp.h>
 
 
 // Pin constants
@@ -30,6 +31,16 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 // Set SSID and password for the robot
 const char *ssid = "RobotzRul";
 const char *password = "omglolwut";
+
+// Server port
+unsigned int localPort = 7245;
+
+// UDP support
+WiFiUDP Udp;
+// Buffer to hold incoming packet
+char packetBuffer[UDP_TX_PACKET_MAX_SIZE]; 
+// Reply buffer
+char replyBuffer[32];
 
 
 // the setup function runs once when you press reset or power the board
@@ -51,7 +62,9 @@ void setup() {
 
   // Setup access point
   WiFi.softAP(ssid, password);
-  
+
+  // Listen for incoming packets
+  Udp.begin(localPort);
 }
 
 
