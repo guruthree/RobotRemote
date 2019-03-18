@@ -42,7 +42,8 @@ WiFiUDP Udp;
 // Buffer to hold incoming packet
 char packetBuffer[UDP_TX_PACKET_MAX_SIZE]; 
 // Reply buffer
-char replyBuffer[32];
+#define REPLYBUFFER_LENGTH 32
+char replyBuffer[REPLYBUFFER_LENGTH];
 
 
 // the setup function runs once when you press reset or power the board
@@ -70,6 +71,8 @@ void setup() {
 
   // Listen for incoming packets
   Udp.begin(localPort);
+  // Make sure reply packet is blank
+  memset(replyBuffer, 0, REPLYBUFFER_LENGTH);
 }
 
 
@@ -79,6 +82,11 @@ void loop() {
   int packetSize = Udp.parsePacket();
   if (packetSize) {
     Udp.read(packetBuffer, UDP_TX_PACKET_MAX_SIZE);
+
+
+    Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
+    Udp.write(replyBuffer);
+    Udp.endPacket();
   }
   
   analogWrite(L_F, 127);
