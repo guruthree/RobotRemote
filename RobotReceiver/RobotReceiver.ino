@@ -5,7 +5,7 @@ RobotReceiver
 Setup up an ESP8266 as a hotspot, then listen for UDP packets
 to direct the attached motors.
 
-Copyright 2019 guruthree
+Copyright (c) 2019 guruthree
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
@@ -52,7 +52,7 @@ unsigned long nextpacket = 0;
 // Disable H-bridge and stop motors
 void emergencyStop() {
   digitalWrite(E_L, 0);
-  digitalWrite(E_R , 0);
+  digitalWrite(E_R, 0);
   digitalWrite(L_F, 0);
   digitalWrite(L_R, 0);
   digitalWrite(R_F, 0);
