@@ -49,6 +49,17 @@ char replyBuffer[REPLYBUFFER_LENGTH];
 unsigned long nextpacket = 0;
 
 
+// Disable H-bridge and stop motors
+void emergencyStop() {
+  digitalWrite(E_L, 0);
+  digitalWrite(E_R , 0);
+  digitalWrite(L_F, 0);
+  digitalWrite(L_R, 0);
+  digitalWrite(R_F, 0);
+  digitalWrite(R_R, 0);
+}
+
+
 // the setup function runs once when you press reset or power the board
 void setup() {
   // Setup output pin directions
