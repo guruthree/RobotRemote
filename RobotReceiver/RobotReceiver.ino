@@ -45,6 +45,9 @@ char packetBuffer[UDP_TX_PACKET_MAX_SIZE];
 #define REPLYBUFFER_LENGTH 32
 char replyBuffer[REPLYBUFFER_LENGTH];
 
+// Networking protocol things
+unsigned long nextpacket = 0;
+
 
 // the setup function runs once when you press reset or power the board
 void setup() {
