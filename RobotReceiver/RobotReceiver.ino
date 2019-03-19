@@ -46,7 +46,9 @@ char packetBuffer[UDP_TX_PACKET_MAX_SIZE];
 char replyBuffer[REPLYBUFFER_LENGTH];
 
 // Networking protocol things
-unsigned long nextpacket = 0;
+#define CONTROLLER_TIMEOUT 3000 // timeout in milliseconds of last packet recieved
+unsigned long nextpacket = 0; // ID of the next outbound packet
+unsigned long lastPacketTime = 0; // time at which the last packet was recieved
 
 
 // Disable H-bridge and stop motors
@@ -92,9 +94,15 @@ void setup() {
 
 // the loop function runs over and over again forever
 void loop() {
+  // Activate emergency stop if the controller has lost the connection
+  if (millis() - lastPacketTime > CONTROLLER_TIMEOUT) {
+    emergencyStop();
+  }
+  
   // if there's data available, read a packet
   int packetSize = Udp.parsePacket();
   if (packetSize) {
+    lastPacketTime = millis();
     Udp.read(packetBuffer, UDP_TX_PACKET_MAX_SIZE);
 
 
