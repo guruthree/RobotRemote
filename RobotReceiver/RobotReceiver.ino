@@ -42,7 +42,7 @@ WiFiUDP Udp;
 // Buffer to hold incoming packet
 char packetBuffer[UDP_TX_PACKET_MAX_SIZE]; 
 // Reply buffer
-#define REPLYBUFFER_LENGTH 32
+#define REPLYBUFFER_LENGTH 48
 char replyBuffer[REPLYBUFFER_LENGTH];
 
 // Networking protocol things
@@ -66,10 +66,27 @@ void emergencyStop() {
   lastEmergencyStop = millis();
 }
 
+// Send a packet
+void sendPacket(unsigned long command, unsigned long argument) {
+  // Make sure reply packet is blank
+  memset(replyBuffer, 0, REPLYBUFFER_LENGTH);
+
+  // Make so we can maniuplate as unsigned long
+  unsigned long* longReplyBuffer = (unsigned long*)replyBuffer;
+  longReplyBuffer[0] = nextpacket++;
+  longReplyBuffer[1] = command;
+  longReplyBuffer[2] = argument;
+  
+  Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
+  Udp.write(replyBuffer, 12);
+  Udp.endPacket();
+}
+
 // Process an incoming packet
-void processPacket(unsigned long command, unsigned long argument) {
+void processPacket(unsigned long packetID, unsigned long command, unsigned long argument) {
   switch (command) {
     case 0: // HELO
+      sendPacket(1, packetID); // Send EHLO packet
       break;
     case 1: // EHLO
       break; // Do nothing
@@ -130,8 +147,6 @@ void setup() {
 
   // Listen for incoming packets
   Udp.begin(localPort);
-  // Make sure reply packet is blank
-  memset(replyBuffer, 0, REPLYBUFFER_LENGTH);
 }
 
 
@@ -153,6 +168,7 @@ void loop() {
     unsigned int packetAt = 0;
     
     Udp.read(packetBuffer, UDP_TX_PACKET_MAX_SIZE);
+    // Make so we can maniuplate as unsigned long
     unsigned long* longPacketBuffer = (unsigned long*)packetBuffer;
     packetID = longPacketBuffer[packetAt++];
     packetSize -= 4;
@@ -170,16 +186,12 @@ void loop() {
 
       if (millis() - lastEmergencyStop > EMERGENCY_STOP_TIMEOUT) {
         // Only process if we have not just emergency stopped
-        processPacket(packetCommand, packetArg);
+        processPacket(packetID, packetCommand, packetArg);
       }
       else {
         break; // No point to continue processing this packet due to emergency stop timeout
       }
     }
-
-    Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
-    Udp.write(replyBuffer);
-    Udp.endPacket();
   }
   
   analogWrite(L_F, 127);
