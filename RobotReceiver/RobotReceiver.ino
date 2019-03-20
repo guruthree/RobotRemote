@@ -68,6 +68,26 @@ void emergencyStop() {
   lastEmergencyStop = millis();
 }
 
+void leftForward(unsigned long velocity) {
+  digitalWrite(L_R, LOW);
+  analogWrite(L_F, velocity);
+}
+
+void leftReverse(unsigned long velocity) {
+  digitalWrite(L_F, LOW);
+  analogWrite(L_R, velocity);
+}
+
+void rightForward(unsigned long velocity) {
+  digitalWrite(R_R, LOW);
+  analogWrite(R_F, velocity);
+}
+
+void rightReverse(unsigned long velocity) {
+  digitalWrite(R_F, LOW);
+  analogWrite(R_R, velocity);
+}
+
 // Send a packet
 void sendPacket(unsigned long command, unsigned long argument) {
   // Make sure reply packet is blank
@@ -94,21 +114,29 @@ void processPacket(unsigned long packetID, unsigned long command, unsigned long 
       break; // Do nothing
 
     case 10: // Left motor enable
+      digitalWrite(E_L, HIGH);
       break;
     case 11: // Left motor disable
+      digitalWrite(E_L, LOW);
       break;
     case 15: // Left motor forwards
+      leftForward(argument);
       break;
     case 16: // Left motor reverse
+      leftReverse(argument);
       break;
 
     case 20: // Right motor enable
+      digitalWrite(E_R, HIGH);
       break;
     case 21: // Right motor disable
+      digitalWrite(E_R, LOW);
       break;
     case 25: // Right motor forwards
+      rightForward(argument);
       break;
     case 26: // Right motor reverse
+      rightReverse(argument);
       break;
 
     case 254: // Soft reset
