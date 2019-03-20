@@ -49,6 +49,7 @@ char replyBuffer[REPLYBUFFER_LENGTH];
 #define CONTROLLER_TIMEOUT 3000 // timeout in milliseconds of last packet recieved
 unsigned long nextpacket = 0; // ID of the next outbound packet
 unsigned long lastPacketTime = 0; // time at which the last packet was recieved
+#define MESSAGE_LENGTH 8
 
 
 // Disable H-bridge and stop motors
@@ -103,8 +104,21 @@ void loop() {
   int packetSize = Udp.parsePacket();
   if (packetSize) {
     lastPacketTime = millis();
-    Udp.read(packetBuffer, UDP_TX_PACKET_MAX_SIZE);
 
+    unsigned long packetID = 0;
+    unsigned long packetCommand = 0;
+    unsigned long packetArg = 0;
+    unsigned int packetAt = 0;
+    
+    Udp.read(packetBuffer, UDP_TX_PACKET_MAX_SIZE);
+    unsigned long* longPacketBuffer = (unsigned long*)packetBuffer;
+    packetID = longPacketBuffer[packetAt++];
+    packetSize -= 4;
+    while (packetSize >= MESSAGE_LENGTH) {
+      packetCommand = longPacketBuffer[packetAt++];
+      packetArg = longPacketBuffer[packetAt++];
+      packetSize -= MESSAGE_LENGTH;
+    }
 
     Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
     Udp.write(replyBuffer);
