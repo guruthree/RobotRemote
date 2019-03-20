@@ -25,5 +25,5 @@ Packet:   ID  CMD  ARG [ CMD  ARG ...
 * Command 21: Right motor disable
 * Command 25: Right motor forwards
 * Command 26: Right motor reverse
-* Command 254: Reset
+* Command 254: Soft reset
 * Command 255: Emergency stop

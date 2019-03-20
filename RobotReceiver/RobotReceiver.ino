@@ -53,6 +53,8 @@ unsigned long lastPacketTime = 0; // time at which the last packet was recieved
 #define EMERGENCY_STOP_TIMEOUT 1000 // accept no new packets after an emergency stop for X ms
 unsigned long lastEmergencyStop = 0;
 
+// Declare reset function
+void(*resetFunc) (void) = 0; // https://www.instructables.com/id/two-ways-to-reset-arduino-in-software/
 
 // Disable H-bridge and stop motors
 void emergencyStop() {
@@ -110,6 +112,8 @@ void processPacket(unsigned long packetID, unsigned long command, unsigned long 
       break;
 
     case 254: // Soft reset
+      emergencyStop();
+      resetFunc();
       break;
     case 255: // Emergency stop
       // this is caught earlier so this should never be reached
