@@ -62,6 +62,42 @@ void emergencyStop() {
   digitalWrite(R_R, 0);
 }
 
+// Process an incoming packet
+void processPacket(unsigned long command, unsigned long argument) {
+  switch (command) {
+    case 0: // HELO
+      break;
+    case 1: // EHLO
+      break; // Do nothing
+
+    case 10: // Left motor enable
+      break;
+    case 11: // Left motor disable
+      break;
+    case 15: // Left motor forwards
+      break;
+    case 16: // Left motor reverse
+      break;
+
+    case 20: // Right motor enable
+      break;
+    case 21: // Right motor disable
+      break;
+    case 25: // Right motor forwards
+      break;
+    case 26: // Right motor reverse
+      break;
+
+    case 254: // Soft reset
+      break;
+    case 255: // Emergency stop
+      break;
+    
+    default:
+      break; // Unknown packet!
+  }
+}
+
 
 // the setup function runs once when you press reset or power the board
 void setup() {
@@ -118,6 +154,7 @@ void loop() {
       packetCommand = longPacketBuffer[packetAt++];
       packetArg = longPacketBuffer[packetAt++];
       packetSize -= MESSAGE_LENGTH;
+      processPacket(packetCommand, packetArg);
     }
 
     Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
