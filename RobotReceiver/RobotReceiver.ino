@@ -58,12 +58,12 @@ void(*resetFunc) (void) = 0; // https://www.instructables.com/id/two-ways-to-res
 
 // Disable H-bridge and stop motors
 void emergencyStop() {
-  digitalWrite(E_L, 0);
-  digitalWrite(E_R, 0);
-  digitalWrite(L_F, 0);
-  digitalWrite(L_R, 0);
-  digitalWrite(R_F, 0);
-  digitalWrite(R_R, 0);
+  digitalWrite(E_L, LOW);
+  digitalWrite(E_R, LOW);
+  digitalWrite(L_F, LOW);
+  digitalWrite(L_R, LOW);
+  digitalWrite(R_F, LOW);
+  digitalWrite(R_R, LOW);
   
   lastEmergencyStop = millis();
 }
