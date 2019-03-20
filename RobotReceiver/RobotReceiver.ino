@@ -50,6 +50,8 @@ char replyBuffer[REPLYBUFFER_LENGTH];
 unsigned long nextpacket = 0; // ID of the next outbound packet
 unsigned long lastPacketTime = 0; // time at which the last packet was recieved
 #define MESSAGE_LENGTH 8
+#define EMERGENCY_STOP_TIMEOUT 1000 // accept no new packets after an emergency stop for X ms
+unsigned long lastEmergencyStop = 0;
 
 
 // Disable H-bridge and stop motors
@@ -60,6 +62,8 @@ void emergencyStop() {
   digitalWrite(L_R, 0);
   digitalWrite(R_F, 0);
   digitalWrite(R_R, 0);
+  
+  lastEmergencyStop = millis();
 }
 
 // Process an incoming packet
@@ -91,6 +95,8 @@ void processPacket(unsigned long command, unsigned long argument) {
     case 254: // Soft reset
       break;
     case 255: // Emergency stop
+      // this is caught earlier so this should never be reached
+      emergencyStop();
       break;
     
     default:
@@ -152,9 +158,23 @@ void loop() {
     packetSize -= 4;
     while (packetSize >= MESSAGE_LENGTH) {
       packetCommand = longPacketBuffer[packetAt++];
+
+      // Emergency stop as early as possible
+      if (packetCommand == 255) {
+        emergencyStop();
+        break; // You should never do anything else after an emergency stop!
+      }
+      
       packetArg = longPacketBuffer[packetAt++];
       packetSize -= MESSAGE_LENGTH;
-      processPacket(packetCommand, packetArg);
+
+      if (millis() - lastEmergencyStop > EMERGENCY_STOP_TIMEOUT) {
+        // Only process if we have not just emergency stopped
+        processPacket(packetCommand, packetArg);
+      }
+      else {
+        break; // No point to continue processing this packet due to emergency stop timeout
+      }
     }
 
     Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
