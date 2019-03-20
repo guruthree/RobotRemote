@@ -138,6 +138,8 @@ void setup() {
   // Right wheel pin
   pinMode(R_F, OUTPUT); // 3A (FORWARDS)
   pinMode(R_R, OUTPUT); // 4A (BACKWARDS)
+  // Built-in LED for status
+  pinMode(LED_BUILTIN, OUTPUT);
 
   // Enable output
   digitalWrite(E_L, HIGH);
@@ -151,6 +153,9 @@ void setup() {
 
   // Listen for incoming packets
   Udp.begin(localPort);
+
+  // Turn LED on to indicate ready
+  digitalWrite(LED_BUILTIN, HIGH);
 }
 
 
@@ -165,6 +170,7 @@ void loop() {
   int packetSize = Udp.parsePacket();
   if (packetSize) {
     lastPacketTime = millis();
+    digitalWrite(LED_BUILTIN, LOW);
 
     unsigned long packetID = 0;
     unsigned long packetCommand = 0;
@@ -196,6 +202,8 @@ void loop() {
         break; // No point to continue processing this packet due to emergency stop timeout
       }
     }
+    
+    digitalWrite(LED_BUILTIN, HIGH);
   }
   
   analogWrite(L_F, 127);
