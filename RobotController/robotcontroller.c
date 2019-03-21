@@ -1,22 +1,13 @@
 #include <stdio.h>
-#include <signal.h>
 #include <SDL/SDL.h>
 
 SDL_Joystick *joystick;
-int cleaned = 0;
 
 void cleanup() {
-    if (cleaned == 0) {
-        SDL_JoystickClose( joystick );
-        joystick = NULL;
-        cleaned = 1;
-        SDL_Quit();
-        exit(0);
-    }
-}
-
-void intHandler(int dummy) {
-    cleanup();
+    if (joystick)
+        SDL_JoystickClose(joystick);
+    joystick = NULL;
+    SDL_Quit();
     exit(0);
 }
 
@@ -25,8 +16,6 @@ int main(){ //int argc, char **argv) {
 
     // Handle internal quits nicely
     atexit(cleanup);
-    signal(SIGINT, intHandler);
-    signal(SIGTERM, intHandler);
 
 	printf("Initialising...\n");
 
