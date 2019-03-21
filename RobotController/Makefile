@@ -12,7 +12,7 @@ EXE=robotcontroller
 DBGDIR = debug
 DBGEXE = $(DBGDIR)/$(EXE)
 DBGOBJS = $(addprefix $(DBGDIR)/, $(OBJS))
-DBGCFLAGS = -g -O0 -DDEBUG
+DBGCFLAGS = -g -O0 -DDEBUG -Wall -Werror -Wextra
 
 RELDIR = release
 RELEXE = $(RELDIR)/$(EXE)
