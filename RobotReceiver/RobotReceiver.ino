@@ -184,6 +184,10 @@ void setup() {
 
   // Turn LED on to indicate ready
   digitalWrite(LED_BUILTIN, HIGH);
+
+  Serial.begin(9600);
+  Serial.println("\nRunning...");
+  Serial.println(sizeof(unsigned long));
 }
 
 
@@ -204,12 +208,21 @@ void loop() {
     if (packetSize == PACKET_LENGTH) {
     
       Udp.read(packetBuffer, UDP_TX_PACKET_MAX_SIZE);
-      
+
+      for (int ii = 0; ii < packetSize; ii++) {
+        Serial.print((unsigned short int)packetBuffer[ii]);
+        Serial.print(" ");
+      }
+      Serial.println("");
+
       // Make so we can maniuplate as unsigned long
       unsigned long* longPacketBuffer = (unsigned long*)packetBuffer;
       
       unsigned long packetID = longPacketBuffer[0];
       unsigned long packetCommand = longPacketBuffer[1];
+
+      Serial.println(packetID);
+      Serial.println(packetCommand);
 
       // Emergency stop as early as possible
       if (packetCommand == 255) {
