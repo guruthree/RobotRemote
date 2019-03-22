@@ -217,9 +217,10 @@ void loop() {
 
       // Make so we can maniuplate as unsigned long
       unsigned long* longPacketBuffer = (unsigned long*)packetBuffer;
-      
-      unsigned long packetID = longPacketBuffer[0];
-      unsigned long packetCommand = longPacketBuffer[1];
+
+      // SDLNet_Write32 uses opposite byte order, so we need to swap it back for the ESP
+      unsigned long packetID = __builtin_bswap32(longPacketBuffer[0]);
+      unsigned long packetCommand = __builtin_bswap32(longPacketBuffer[1]);
 
       Serial.println(packetID);
       Serial.println(packetCommand);
@@ -229,7 +230,7 @@ void loop() {
         emergencyStop();
       }
       else {
-        unsigned long packetArg = longPacketBuffer[3];
+        unsigned long packetArg = __builtin_bswap32(longPacketBuffer[3]);
         if (millis() - lastEmergencyStop > EMERGENCY_STOP_TIMEOUT) {
           // Only process if we have not just emergency stopped
           processPacket(packetID, packetCommand, packetArg);
