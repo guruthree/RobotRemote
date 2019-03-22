@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <SDL/SDL.h>
+#include <SDL/SDL_net.h>
 
 SDL_Joystick *joystick;
 
