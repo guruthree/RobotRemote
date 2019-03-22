@@ -5,7 +5,7 @@
 SDL_Joystick *joystick;
 
 void cleanup() {
-    printf('Exiting...\n');
+    printf("Exiting...\n");
     if (joystick)
         SDL_JoystickClose(joystick);
     joystick = NULL;
