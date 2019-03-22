@@ -49,7 +49,7 @@ char replyBuffer[REPLYBUFFER_LENGTH];
 #define CONTROLLER_TIMEOUT 3000 // timeout in milliseconds of last packet recieved
 unsigned long nextpacket = 0; // ID of the next outbound packet
 unsigned long lastPacketTime = 0; // time at which the last packet was recieved
-#define MESSAGE_LENGTH 8
+#define PACKET_LENGTH 12
 #define EMERGENCY_STOP_TIMEOUT 1000 // accept no new packets after an emergency stop for X ms
 unsigned long lastEmergencyStop = 0;
 
@@ -100,7 +100,7 @@ void sendPacket(unsigned long command, unsigned long argument) {
   longReplyBuffer[2] = argument;
   
   Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
-  Udp.write(replyBuffer, 12);
+  Udp.write(replyBuffer, PACKET_LENGTH);
   Udp.endPacket();
 }
 
@@ -200,18 +200,16 @@ void loop() {
     lastPacketTime = millis();
     digitalWrite(LED_BUILTIN, LOW);
 
-    unsigned long packetID = 0;
-    unsigned long packetCommand = 0;
-    unsigned long packetArg = 0;
-    unsigned int packetAt = 0;
+    // Packet probably is expected, process
+    if (packetSize == PACKET_LENGTH) {
     
-    Udp.read(packetBuffer, UDP_TX_PACKET_MAX_SIZE);
-    // Make so we can maniuplate as unsigned long
-    unsigned long* longPacketBuffer = (unsigned long*)packetBuffer;
-    packetID = longPacketBuffer[packetAt++];
-    packetSize -= 4;
-    while (packetSize >= MESSAGE_LENGTH) {
-      packetCommand = longPacketBuffer[packetAt++];
+      Udp.read(packetBuffer, UDP_TX_PACKET_MAX_SIZE);
+      
+      // Make so we can maniuplate as unsigned long
+      unsigned long* longPacketBuffer = (unsigned long*)packetBuffer;
+      
+      unsigned long packetID = longPacketBuffer[0];
+      unsigned long packetCommand = longPacketBuffer[1];
 
       // Emergency stop as early as possible
       if (packetCommand == 255) {
@@ -219,8 +217,7 @@ void loop() {
         break; // You should never do anything else after an emergency stop!
       }
       
-      packetArg = longPacketBuffer[packetAt++];
-      packetSize -= MESSAGE_LENGTH;
+      unsigned long packetArg = longPacketBuffer[3];
 
       if (millis() - lastEmergencyStop > EMERGENCY_STOP_TIMEOUT) {
         // Only process if we have not just emergency stopped
@@ -234,11 +231,11 @@ void loop() {
     digitalWrite(LED_BUILTIN, HIGH);
   }
   
-  analogWrite(L_F, 127);
-  analogWrite(R_F , 127);
-  delay(2500);
+  //analogWrite(L_F, 127);
+  //analogWrite(R_F , 127);
+  //delay(2500);
   
-  analogWrite(L_F, 31);
-  analogWrite(R_F, 31);
-  delay(2500);
+  //analogWrite(L_F, 31);
+  //analogWrite(R_F, 31);
+  //delay(2500);
 }
