@@ -2,19 +2,28 @@
 #include <SDL/SDL.h>
 #include <SDL/SDL_net.h>
 
+#define REMOTE_HOST "192.168.4.1"
+#define REMOTE_PORT 7245
+
 SDL_Joystick *joystick;
+UDPsocket socket;
 
 void cleanup() {
     printf("Exiting...\n");
+    if (socket)
+        SDLNet_UDP_Close(socket);
+    socket = NULL;
     if (joystick)
         SDL_JoystickClose(joystick);
     joystick = NULL;
+    SDLNet_Quit();
     SDL_Quit();
     exit(0);
 }
 
 int main(){ //int argc, char **argv) {
     int i;
+    IPaddress remoteAddr;
 
     // Handle internal quits nicely
     atexit(cleanup);
@@ -25,6 +34,11 @@ int main(){ //int argc, char **argv) {
         fprintf(stderr, "Couldn't initialize SDL: %s\n", SDL_GetError());
         exit(1);
     }
+    if(SDLNet_Init() < 0) {
+        fprintf(stderr, "Couldn't initialise SDLNet: %s\n", SDLNet_GetError());
+        exit(1);
+    }
+
     i = SDL_NumJoysticks();
     printf("%i joysticks were found.\n", i);
     if (i == 0) {
@@ -44,11 +58,30 @@ int main(){ //int argc, char **argv) {
         exit(1);
     }
 
+    // Networking...
+    SDLNet_ResolveHost(&remoteAddr, REMOTE_HOST, REMOTE_PORT);
+    socket = SDLNet_UDP_Open(0);
+    if (!socket) {
+        fprintf(stderr, "SDLNet_UDP_Open: %s\n", SDLNet_GetError());
+        exit(4);
+    }
+    UDPpacket *packet;
+    packet = SDLNet_AllocPacket(512);
+    if (!packet) {
+        fprintf(stderr, "SDLNet_AllocPacket: %s\n", SDLNet_GetError());
+        exit(5);
+    }
+
+
     SDL_Event event;
 
     // Main loop
     int running = 1;
     while (running) {
+
+        // recieve all waiting packets
+        while (SDLNet_UDP_Recv(socket, packet)) {
+        }
 
         while(SDL_PollEvent(&event) != 0)
         {  
