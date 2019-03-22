@@ -5,6 +5,7 @@
 SDL_Joystick *joystick;
 
 void cleanup() {
+    printf('Exiting...\n');
     if (joystick)
         SDL_JoystickClose(joystick);
     joystick = NULL;
@@ -25,7 +26,7 @@ int main(){ //int argc, char **argv) {
         exit(1);
     }
     i = SDL_NumJoysticks();
-    printf("%i joysticks were found.\n\n", i);
+    printf("%i joysticks were found.\n", i);
     if (i == 0) {
         exit(3);
     }
