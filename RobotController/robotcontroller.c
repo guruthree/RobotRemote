@@ -20,12 +20,19 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 #define REMOTE_HOST "192.168.4.1"
 #define REMOTE_PORT 7245
+#define HEARTBEAT_TIMEOUT 500
 
 SDL_Joystick *joystick;
 UDPsocket socket;
+UDPpacket *packet;
+unsigned long nextpacket = 0;
+unsigned long lastPacketTime = 0;
 
 void cleanup() {
     printf("Exiting...\n");
+    if (packet)
+        SDLNet_FreePacket(packet);
+    packet = NULL;
     if (socket)
         SDLNet_UDP_Close(socket);
     socket = NULL;
@@ -39,7 +46,6 @@ void cleanup() {
 
 int main(){ //int argc, char **argv) {
     int i;
-    IPaddress remoteAddr;
 
     // Handle internal quits nicely
     atexit(cleanup);
@@ -75,13 +81,13 @@ int main(){ //int argc, char **argv) {
     }
 
     // Networking...
+    IPaddress remoteAddr;
     SDLNet_ResolveHost(&remoteAddr, REMOTE_HOST, REMOTE_PORT);
     socket = SDLNet_UDP_Open(0);
     if (!socket) {
         fprintf(stderr, "SDLNet_UDP_Open: %s\n", SDLNet_GetError());
         exit(4);
     }
-    UDPpacket *packet;
     packet = SDLNet_AllocPacket(512);
     if (!packet) {
         fprintf(stderr, "SDLNet_AllocPacket: %s\n", SDLNet_GetError());
@@ -94,6 +100,20 @@ int main(){ //int argc, char **argv) {
     // Main loop
     int running = 1;
     while (running) {
+
+        if (SDL_GetTicks() - lastPacketTime > HEARTBEAT_TIMEOUT) {
+            lastPacketTime = SDL_GetTicks();
+
+            packet->address.host = remoteAddr.host;
+            packet->address.port = remoteAddr.port;
+            char *tmp;
+            tmp = packet->data;
+            SDLNet_Write32(nextpacket++, tmp);
+            SDLNet_Write32(0, tmp); // HELO
+            SDLNet_Write32(0, tmp); // no arguments to HELO
+            packet->len = 12;
+            SDLNet_UDP_Send(socket, -1, packet);
+        }
 
         // recieve all waiting packets
         while (SDLNet_UDP_Recv(socket, packet)) {
