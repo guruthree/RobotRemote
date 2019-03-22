@@ -1,17 +1,17 @@
 /*
 
-RobotReceiver
+  RobotReceiver
 
-Setup up an ESP8266 as a hotspot, then listen for UDP packets
-to direct the attached motors.
+  Setup up an ESP8266 as a hotspot, then listen for UDP packets
+  to direct the attached motors.
 
-Copyright (c) 2019 guruthree
+  Copyright (c) 2019 guruthree
 
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+  Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+  The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 */
 
@@ -40,7 +40,7 @@ unsigned int localPort = 7245;
 // UDP support
 WiFiUDP Udp;
 // Buffer to hold incoming packet
-char packetBuffer[UDP_TX_PACKET_MAX_SIZE]; 
+char packetBuffer[UDP_TX_PACKET_MAX_SIZE];
 // Reply buffer
 #define REPLYBUFFER_LENGTH 48
 char replyBuffer[REPLYBUFFER_LENGTH];
@@ -64,8 +64,9 @@ void emergencyStop() {
   digitalWrite(L_R, LOW);
   digitalWrite(R_F, LOW);
   digitalWrite(R_R, LOW);
-  
+
   lastEmergencyStop = millis();
+  Serial.println("Emergency stopped.");
 }
 
 void leftForward(unsigned long velocity) {
@@ -98,7 +99,7 @@ void sendPacket(unsigned long command, unsigned long argument) {
   longReplyBuffer[0] = nextpacket++;
   longReplyBuffer[1] = command;
   longReplyBuffer[2] = argument;
-  
+
   Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
   Udp.write(replyBuffer, PACKET_LENGTH);
   Udp.endPacket();
@@ -147,7 +148,7 @@ void processPacket(unsigned long packetID, unsigned long command, unsigned long 
       // this is caught earlier so this should never be reached
       emergencyStop();
       break;
-    
+
     default:
       break; // Unknown packet!
   }
@@ -197,7 +198,7 @@ void loop() {
   if (millis() - lastPacketTime > CONTROLLER_TIMEOUT) {
     emergencyStop();
   }
-  
+
   // if there's data available, read a packet
   int packetSize = Udp.parsePacket();
   if (packetSize) {
@@ -206,7 +207,7 @@ void loop() {
 
     // Packet probably is expected, process
     if (packetSize == PACKET_LENGTH) {
-    
+
       Udp.read(packetBuffer, UDP_TX_PACKET_MAX_SIZE);
 
       for (int ii = 0; ii < packetSize; ii++) {
@@ -237,14 +238,14 @@ void loop() {
         }
       }
     }
-    
+
     digitalWrite(LED_BUILTIN, HIGH);
   }
-  
+
   //analogWrite(L_F, 127);
   //analogWrite(R_F , 127);
   //delay(2500);
-  
+
   //analogWrite(L_F, 31);
   //analogWrite(R_F, 31);
   //delay(2500);
