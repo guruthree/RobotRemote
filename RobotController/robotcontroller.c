@@ -24,8 +24,12 @@ int main(){ //int argc, char **argv) {
         fprintf(stderr, "Couldn't initialize SDL: %s\n", SDL_GetError());
         exit(1);
     }
+    i = SDL_NumJoysticks();
+    printf("%i joysticks were found.\n\n", i);
+    if (i == 0) {
+        exit(3);
+    }
 
-    printf("%i joysticks were found.\n\n", SDL_NumJoysticks() );
     printf("The names of the joysticks are:\n");
 	
     for (i = 0; i < SDL_NumJoysticks(); i++) {
