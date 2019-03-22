@@ -25,7 +25,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 SDL_Joystick *joystick;
 UDPsocket socket;
 UDPpacket *packet;
-unsigned long nextpacket = 0;
+Uint32 nextpacket = 0;
 unsigned long lastPacketTime = 0;
 
 void cleanup() {
@@ -88,12 +88,11 @@ int main(){ //int argc, char **argv) {
         fprintf(stderr, "SDLNet_UDP_Open: %s\n", SDLNet_GetError());
         exit(4);
     }
-    packet = SDLNet_AllocPacket(512);
+    packet = SDLNet_AllocPacket(48);
     if (!packet) {
         fprintf(stderr, "SDLNet_AllocPacket: %s\n", SDLNet_GetError());
         exit(5);
     }
-
 
     SDL_Event event;
 
@@ -106,17 +105,20 @@ int main(){ //int argc, char **argv) {
 
             packet->address.host = remoteAddr.host;
             packet->address.port = remoteAddr.port;
-            char *tmp;
-            tmp = packet->data;
-            SDLNet_Write32(nextpacket++, tmp);
-            SDLNet_Write32(0, tmp); // HELO
-            SDLNet_Write32(0, tmp); // no arguments to HELO
+
+            nextpacket++;
+            SDLNet_Write32(nextpacket, packet->data);
+            SDLNet_Write32(0, packet->data+4); // HELO
+            SDLNet_Write32(0, packet->data+8); // no arguments to HELO*/
+
             packet->len = 12;
             SDLNet_UDP_Send(socket, -1, packet);
+            printf("Sending heartbeat (%d)!\n", nextpacket);
         }
 
         // recieve all waiting packets
-        while (SDLNet_UDP_Recv(socket, packet)) {
+        while (SDLNet_UDP_Recv(socket, packet) == 1) {
+            printf("Packet recieved...\n");
         }
 
         while(SDL_PollEvent(&event) != 0)
