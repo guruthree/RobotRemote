@@ -214,17 +214,13 @@ void loop() {
       // Emergency stop as early as possible
       if (packetCommand == 255) {
         emergencyStop();
-        break; // You should never do anything else after an emergency stop!
-      }
-      
-      unsigned long packetArg = longPacketBuffer[3];
-
-      if (millis() - lastEmergencyStop > EMERGENCY_STOP_TIMEOUT) {
-        // Only process if we have not just emergency stopped
-        processPacket(packetID, packetCommand, packetArg);
       }
       else {
-        break; // No point to continue processing this packet due to emergency stop timeout
+        unsigned long packetArg = longPacketBuffer[3];
+        if (millis() - lastEmergencyStop > EMERGENCY_STOP_TIMEOUT) {
+          // Only process if we have not just emergency stopped
+          processPacket(packetID, packetCommand, packetArg);
+        }
       }
     }
     
