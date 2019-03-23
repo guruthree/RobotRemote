@@ -243,7 +243,7 @@ void loop() {
       Serial.println("emergency stop");
       }
       else {
-        unsigned long packetArg = __builtin_bswap32(longPacketBuffer[3]);
+        unsigned long packetArg = __builtin_bswap32(longPacketBuffer[2]);
         
         Serial.print(packetID);
         Serial.print(": ");
