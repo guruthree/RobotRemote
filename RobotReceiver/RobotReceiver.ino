@@ -182,9 +182,8 @@ void setup() {
   // Built-in LED for status
   pinMode(LED_BUILTIN, OUTPUT);
 
-  // Enable output
-  digitalWrite(E_L, HIGH);
-  digitalWrite(E_R, HIGH);
+  // make sure nothing's going on boot
+  emergencyStop();
 
   // Setup PWM resolution
   analogWriteRange(MYPWMRANGE);
@@ -241,6 +240,7 @@ void loop() {
       // Emergency stop as early as possible
       if (packetCommand == 255) {
         emergencyStop();
+      Serial.println("emergency stop");
       }
       else {
         unsigned long packetArg = __builtin_bswap32(longPacketBuffer[3]);
