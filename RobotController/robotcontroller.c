@@ -160,13 +160,13 @@ int main(){ //int argc, char **argv) {
                             }
                         }
                         else {
-                            sendPacket(15, 0);
-                            sendPacket(16, 0);
+                            sendPacket(25, 0);
+                            sendPacket(26, 0);
                         }
                     }
                     else {
                         if ((event.jaxis.value < -DEADZONE ) || (event.jaxis.value > DEADZONE)) {
-                            printf("axis: %i value: %i\n", event.jaxis.axis, event.jaxis.value);
+//                            printf("axis: %i value: %i\n", event.jaxis.axis, event.jaxis.value);
                         }
                     }
                     break;
