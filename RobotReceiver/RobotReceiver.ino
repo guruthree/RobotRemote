@@ -72,21 +72,29 @@ void emergencyStop() {
 void leftForward(unsigned long velocity) {
   digitalWrite(L_R, LOW);
   analogWrite(L_F, velocity);
+  Serial.print("left forward: ");
+  Serial.println(velocity);
 }
 
 void leftReverse(unsigned long velocity) {
   digitalWrite(L_F, LOW);
   analogWrite(L_R, velocity);
+  Serial.print("left reverse: ");
+  Serial.println(velocity);
 }
 
 void rightForward(unsigned long velocity) {
   digitalWrite(R_R, LOW);
   analogWrite(R_F, velocity);
+  Serial.print("right forward: ");
+  Serial.println(velocity);
 }
 
 void rightReverse(unsigned long velocity) {
   digitalWrite(R_F, LOW);
   analogWrite(R_R, velocity);
+  Serial.print("right reverse: ");
+  Serial.println(velocity);
 }
 
 // Send a packet
@@ -118,6 +126,7 @@ void processPacket(unsigned long packetID, unsigned long command, unsigned long 
 
     case 10: // Left motor enable
       digitalWrite(E_L, HIGH);
+      Serial.println("left enable");
       break;
     case 11: // Left motor disable
       digitalWrite(E_L, LOW);
@@ -131,6 +140,7 @@ void processPacket(unsigned long packetID, unsigned long command, unsigned long 
 
     case 20: // Right motor enable
       digitalWrite(E_R, HIGH);
+      Serial.println("right enable");
       break;
     case 21: // Right motor disable
       digitalWrite(E_R, LOW);
