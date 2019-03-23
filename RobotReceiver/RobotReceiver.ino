@@ -27,7 +27,7 @@
 #define R_F D2 // "3A" right motor forwards
 #define R_R D3 // "4A" right motor reverse
 
-// Local PWM range to match what the remote sents
+// Local PWM range to match what the remote sends
 #define MYPWMRANGE 255
 
 // Set SSID and password for the robot
