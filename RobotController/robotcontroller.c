@@ -18,8 +18,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 #include <SDL/SDL.h>
 #include <SDL/SDL_net.h>
 
-#define DEADZONE 3200
 #define JOYSTICK_MAX 32768
+#define DEADZONE (JOYSTICK_MAX/10)
 
 #define MYPWMRANGE 255
 
@@ -131,16 +131,9 @@ int main(){ //int argc, char **argv) {
             switch(event.type)
             {  
                 case SDL_JOYAXISMOTION:  /* Handle Joystick Motion */
-                    printf("axis: %i value: %i\n", event.jaxis.axis, event.jaxis.value);
-/*                    if ((event.jaxis.value < -3200 ) || (event.jaxis.value > 3200)) {
-                        if (event.jaxis.axis == 0) {
-                            printf("LR: %i\n", event.jaxis.value);
-                        }
-
-                        if (event.jaxis.axis == 1) {
-                            printf("UD: %i\n", event.jaxis.value);
-                        }
-                    }*/
+                    if ((event.jaxis.value < -DEADZONE ) || (event.jaxis.value > DEADZONE)) {
+                        printf("axis: %i value: %i\n", event.jaxis.axis, event.jaxis.value);
+                    }
                     break;
 
                 case SDL_JOYBUTTONDOWN:  /* Handle Joystick Button Presses */
