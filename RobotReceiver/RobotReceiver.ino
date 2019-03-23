@@ -72,29 +72,37 @@ void emergencyStop() {
 void leftForward(unsigned long velocity) {
   digitalWrite(L_R, LOW);
   analogWrite(L_F, velocity);
+#ifdef DEBUG
   Serial.print("left forward: ");
   Serial.println(velocity);
+#endif
 }
 
 void leftReverse(unsigned long velocity) {
   digitalWrite(L_F, LOW);
   analogWrite(L_R, velocity);
+#ifdef DEBUG
   Serial.print("left reverse: ");
   Serial.println(velocity);
+#endif
 }
 
 void rightForward(unsigned long velocity) {
   digitalWrite(R_R, LOW);
   analogWrite(R_F, velocity);
+#ifdef DEBUG
   Serial.print("right forward: ");
   Serial.println(velocity);
+#endif
 }
 
 void rightReverse(unsigned long velocity) {
   digitalWrite(R_F, LOW);
   analogWrite(R_R, velocity);
+#ifdef DEBUG
   Serial.print("right reverse: ");
   Serial.println(velocity);
+#endif
 }
 
 // Send a packet
@@ -125,8 +133,10 @@ void processPacket(unsigned long packetID, unsigned long command, unsigned long 
       break; // Do nothing
 
     case 10: // Left motor enable
-      digitalWrite(E_L, HIGH);
+      digitalWrite(E_L, HIGH);      
+#ifdef DEBUG
       Serial.println("left enable");
+#endif
       break;
     case 11: // Left motor disable
       digitalWrite(E_L, LOW);
@@ -139,8 +149,10 @@ void processPacket(unsigned long packetID, unsigned long command, unsigned long 
       break;
 
     case 20: // Right motor enable
-      digitalWrite(E_R, HIGH);
+      digitalWrite(E_R, HIGH);   
+#ifdef DEBUG
       Serial.println("right enable");
+#endif
       break;
     case 21: // Right motor disable
       digitalWrite(E_R, LOW);
@@ -197,9 +209,11 @@ void setup() {
   // Turn LED on to indicate ready
   digitalWrite(LED_BUILTIN, HIGH);
 
+#ifdef DEBUG
   Serial.begin(115200);
   Serial.println("\nRunning...");
   Serial.println(sizeof(unsigned long));
+#endif
 }
 
 
@@ -221,6 +235,7 @@ void loop() {
 
       Udp.read(packetBuffer, UDP_TX_PACKET_MAX_SIZE);
 
+#ifdef DEBUG
       for (int ii = 0; ii < packetSize; ii++) {
         Serial.print((unsigned short int)packetBuffer[ii]);
         Serial.print(" ");
@@ -228,6 +243,7 @@ void loop() {
           Serial.print(" ");
       }
       Serial.print("- ");
+#endif
 
       // Make so we can maniuplate as unsigned long
       unsigned long* longPacketBuffer = (unsigned long*)packetBuffer;
@@ -240,16 +256,20 @@ void loop() {
       // Emergency stop as early as possible
       if (packetCommand == 255) {
         emergencyStop();
-      Serial.println("emergency stop");
+#ifdef DEBUG
+        Serial.println("emergency stop");
+#endif
       }
       else {
         unsigned long packetArg = __builtin_bswap32(longPacketBuffer[2]);
-        
+
+#ifdef DEBUG        
         Serial.print(packetID);
         Serial.print(": ");
         Serial.print(packetCommand);
         Serial.print(", ");
         Serial.println(packetArg);
+#endif
        
         if (millis() - lastEmergencyStop > EMERGENCY_STOP_TIMEOUT) {
           // Only process if we have not just emergency stopped
@@ -260,12 +280,4 @@ void loop() {
 
     digitalWrite(LED_BUILTIN, HIGH);
   }
-
-  //analogWrite(L_F, 127);
-  //analogWrite(R_F , 127);
-  //delay(2500);
-
-  //analogWrite(L_F, 31);
-  //analogWrite(R_F, 31);
-  //delay(2500);
 }
