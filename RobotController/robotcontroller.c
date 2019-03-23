@@ -29,6 +29,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 SDL_Joystick *joystick;
 UDPsocket socket;
+IPaddress remoteAddr;
 UDPpacket *packet;
 Uint32 nextpacket = 0;
 unsigned long lastPacketTime = 0;
@@ -48,6 +49,21 @@ void cleanup() {
     SDL_Quit();
     exit(0);
 }
+
+void sendPacket(Uint32 command, Uint32 argument) {
+    packet->address.host = remoteAddr.host;
+    packet->address.port = remoteAddr.port;
+
+    nextpacket++;
+    SDLNet_Write32(nextpacket, packet->data);
+    SDLNet_Write32(command, packet->data+4); // HELO
+    SDLNet_Write32(argument, packet->data+8); // no arguments to HELO*/
+
+    packet->len = 12;
+    SDLNet_UDP_Send(socket, -1, packet);
+    lastPacketTime = SDL_GetTicks();
+}
+
 
 int main(){ //int argc, char **argv) {
     int i;
@@ -86,7 +102,6 @@ int main(){ //int argc, char **argv) {
     }
 
     // Networking...
-    IPaddress remoteAddr;
     SDLNet_ResolveHost(&remoteAddr, REMOTE_HOST, REMOTE_PORT);
     socket = SDLNet_UDP_Open(0);
     if (!socket) {
@@ -106,18 +121,7 @@ int main(){ //int argc, char **argv) {
     while (running) {
 
         if (SDL_GetTicks() - lastPacketTime > HEARTBEAT_TIMEOUT) {
-            lastPacketTime = SDL_GetTicks();
-
-            packet->address.host = remoteAddr.host;
-            packet->address.port = remoteAddr.port;
-
-            nextpacket++;
-            SDLNet_Write32(nextpacket, packet->data);
-            SDLNet_Write32(0, packet->data+4); // HELO
-            SDLNet_Write32(0, packet->data+8); // no arguments to HELO*/
-
-            packet->len = 12;
-            SDLNet_UDP_Send(socket, -1, packet);
+            sendPacket(0, 0);
             printf("Sending heartbeat (%d)!\n", nextpacket);
         }
 
