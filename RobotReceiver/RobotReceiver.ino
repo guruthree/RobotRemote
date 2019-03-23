@@ -52,9 +52,20 @@ unsigned long lastPacketTime = 0; // time at which the last packet was recieved
 #define PACKET_LENGTH 12
 #define EMERGENCY_STOP_TIMEOUT 1000 // accept no new packets after an emergency stop for X ms
 unsigned long lastEmergencyStop = 0;
+int stopped = 1;
 
 // Declare reset function
 void(*resetFunc) (void) = 0; // https://www.instructables.com/id/two-ways-to-reset-arduino-in-software/
+
+int LEDstate = HIGH;
+void setLED(int instate) {
+  LEDstate = instate;
+  //digitalWrite(LED_BUILTIN, LEDstate);
+  if (LEDstate == HIGH)
+    analogWrite(LED_BUILTIN, MYPWMRANGE);
+  else
+    analogWrite(LED_BUILTIN, MYPWMRANGE-8);
+}
 
 // Disable H-bridge and stop motors
 void emergencyStop() {
@@ -66,6 +77,8 @@ void emergencyStop() {
   digitalWrite(R_R, LOW);
 
   lastEmergencyStop = millis();
+  setLED(HIGH);
+  stopped = 1;
   //  Serial.println("Emergency stopped.");
 }
 
@@ -133,7 +146,9 @@ void processPacket(unsigned long packetID, unsigned long command, unsigned long 
       break; // Do nothing
 
     case 10: // Left motor enable
-      digitalWrite(E_L, HIGH);      
+      digitalWrite(E_L, HIGH);
+      setLED(LOW);
+      stopped = 0;
 #ifdef DEBUG
       Serial.println("left enable");
 #endif
@@ -149,7 +164,9 @@ void processPacket(unsigned long packetID, unsigned long command, unsigned long 
       break;
 
     case 20: // Right motor enable
-      digitalWrite(E_R, HIGH);   
+      digitalWrite(E_R, HIGH);
+      setLED(LOW);
+      stopped = 0;
 #ifdef DEBUG
       Serial.println("right enable");
 #endif
@@ -206,8 +223,8 @@ void setup() {
   // Listen for incoming packets
   Udp.begin(localPort);
 
-  // Turn LED on to indicate ready
-  digitalWrite(LED_BUILTIN, HIGH);
+  // LED HIGH is off, showing no connection
+  setLED(HIGH);
 
 #ifdef DEBUG
   Serial.begin(115200);
@@ -228,7 +245,8 @@ void loop() {
   int packetSize = Udp.parsePacket();
   if (packetSize) {
     lastPacketTime = millis();
-    digitalWrite(LED_BUILTIN, LOW);
+    // Flash LED to show recieved
+    setLED(!LEDstate);
 
     // Packet probably is expected, process
     if (packetSize == PACKET_LENGTH) {
@@ -252,7 +270,6 @@ void loop() {
       unsigned long packetID = __builtin_bswap32(longPacketBuffer[0]);
       unsigned long packetCommand = __builtin_bswap32(longPacketBuffer[1]);
 
-
       // Emergency stop as early as possible
       if (packetCommand == 255) {
         emergencyStop();
@@ -275,9 +292,10 @@ void loop() {
           // Only process if we have not just emergency stopped
           processPacket(packetID, packetCommand, packetArg);
         }
+        if (stopped) {
+           setLED(!LEDstate);
+        }
       }
     }
-
-    digitalWrite(LED_BUILTIN, HIGH);
   }
 }
