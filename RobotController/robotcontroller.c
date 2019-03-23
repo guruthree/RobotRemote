@@ -18,6 +18,11 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 #include <SDL/SDL.h>
 #include <SDL/SDL_net.h>
 
+#define DEADZONE 3200
+#define JOYSTICK_MAX 32768
+
+#define MYPWMRANGE 255
+
 #define REMOTE_HOST "192.168.4.1"
 #define REMOTE_PORT 7245
 #define HEARTBEAT_TIMEOUT 500
@@ -137,6 +142,14 @@ int main(){ //int argc, char **argv) {
                         }
                     }*/
                     break;
+
+                case SDL_JOYBUTTONDOWN:  /* Handle Joystick Button Presses */
+                    printf("button %i pressed\n", event.jbutton.button);
+                break;
+
+                case SDL_JOYHATMOTION:  /* Handle Hat Motion */
+                    printf("dpad %i pressed\n", event.jhat.value);
+                break;
 
                 case SDL_QUIT:
                     running = 0;
