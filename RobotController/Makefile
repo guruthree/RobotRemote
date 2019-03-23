@@ -21,10 +21,10 @@ RELCFLAGS = -O3 -DNDEBUG
 
 all: prep release
 
-run:
+run: all
 	$(RELDIR)/$(EXE)
 
-debugrun:
+debugrun: prep debug
 	$(DEBUGGER) $(DBGDIR)/$(EXE)
 
 debug: $(DBGEXE)
