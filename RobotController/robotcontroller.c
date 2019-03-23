@@ -56,12 +56,13 @@ void sendPacket(Uint32 command, Uint32 argument) {
 
     nextpacket++;
     SDLNet_Write32(nextpacket, packet->data);
-    SDLNet_Write32(command, packet->data+4); // HELO
-    SDLNet_Write32(argument, packet->data+8); // no arguments to HELO*/
+    SDLNet_Write32(command, packet->data+4);
+    SDLNet_Write32(argument, packet->data+8);
 
     packet->len = 12;
     SDLNet_UDP_Send(socket, -1, packet);
     lastPacketTime = SDL_GetTicks();
+//    printf("sending packet %i, %i, %i\n", nextpacket, command, argument);
 }
 
 
@@ -135,8 +136,38 @@ int main(){ //int argc, char **argv) {
             switch(event.type)
             {  
                 case SDL_JOYAXISMOTION:  /* Handle Joystick Motion */
-                    if ((event.jaxis.value < -DEADZONE ) || (event.jaxis.value > DEADZONE)) {
-                        printf("axis: %i value: %i\n", event.jaxis.axis, event.jaxis.value);
+                    if (event.jaxis.axis == 1) { // Left up/down
+                        if ((event.jaxis.value < -DEADZONE ) || (event.jaxis.value > DEADZONE)) {
+                            if (event.jaxis.value > 0) { // down
+                                sendPacket(16, (MYPWMRANGE * (event.jaxis.value - DEADZONE)) / (JOYSTICK_MAX - DEADZONE));
+                            }
+                            else { // up
+                                sendPacket(15, (MYPWMRANGE * (-event.jaxis.value - DEADZONE)) / (JOYSTICK_MAX - DEADZONE));
+                            }
+                        }
+                        else {
+                            sendPacket(15, 0);
+                            sendPacket(16, 0);
+                        }
+                    }
+                    else if (event.jaxis.axis == 4) { // Right up/down
+                        if ((event.jaxis.value < -DEADZONE ) || (event.jaxis.value > DEADZONE)) {
+                            if (event.jaxis.value > 0) { // down
+                                sendPacket(26, (MYPWMRANGE * (event.jaxis.value - DEADZONE)) / (JOYSTICK_MAX - DEADZONE));
+                            }
+                            else { // up
+                                sendPacket(25, (MYPWMRANGE * (-event.jaxis.value - DEADZONE)) / (JOYSTICK_MAX - DEADZONE));
+                            }
+                        }
+                        else {
+                            sendPacket(15, 0);
+                            sendPacket(16, 0);
+                        }
+                    }
+                    else {
+                        if ((event.jaxis.value < -DEADZONE ) || (event.jaxis.value > DEADZONE)) {
+                            printf("axis: %i value: %i\n", event.jaxis.axis, event.jaxis.value);
+                        }
                     }
                     break;
 
@@ -146,6 +177,7 @@ int main(){ //int argc, char **argv) {
                         sendPacket(20, 0); // enable right motor
                     }
                     else {
+                        sendPacket(255, 0); // any other button, stop!
                         printf("button %i pressed\n", event.jbutton.button);
                     }
                     
