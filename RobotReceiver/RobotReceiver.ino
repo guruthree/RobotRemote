@@ -96,9 +96,11 @@ void sendPacket(unsigned long command, unsigned long argument) {
 
   // Make so we can maniuplate as unsigned long
   unsigned long* longReplyBuffer = (unsigned long*)replyBuffer;
-  longReplyBuffer[0] = nextpacket++;
-  longReplyBuffer[1] = command;
-  longReplyBuffer[2] = argument;
+  nextpacket += 1;
+  // SDLNet_Write32 uses opposite byte order, so we need to swap it back for the ESP
+  longReplyBuffer[0] = __builtin_bswap32(nextpacket);
+  longReplyBuffer[1] = __builtin_bswap32(command);
+  longReplyBuffer[2] = __builtin_bswap32(argument);
 
   Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
   Udp.write(replyBuffer, PACKET_LENGTH);
