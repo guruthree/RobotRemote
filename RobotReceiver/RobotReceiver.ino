@@ -66,7 +66,7 @@ void emergencyStop() {
   digitalWrite(R_R, LOW);
 
   lastEmergencyStop = millis();
-  Serial.println("Emergency stopped.");
+  //  Serial.println("Emergency stopped.");
 }
 
 void leftForward(unsigned long velocity) {
@@ -186,7 +186,7 @@ void setup() {
   // Turn LED on to indicate ready
   digitalWrite(LED_BUILTIN, HIGH);
 
-  Serial.begin(9600);
+  Serial.begin(115200);
   Serial.println("\nRunning...");
   Serial.println(sizeof(unsigned long));
 }
@@ -213,8 +213,10 @@ void loop() {
       for (int ii = 0; ii < packetSize; ii++) {
         Serial.print((unsigned short int)packetBuffer[ii]);
         Serial.print(" ");
+        if ((ii+1) % 4 == 0)
+          Serial.print(" ");
       }
-      Serial.println("");
+      Serial.print("- ");
 
       // Make so we can maniuplate as unsigned long
       unsigned long* longPacketBuffer = (unsigned long*)packetBuffer;
@@ -223,8 +225,6 @@ void loop() {
       unsigned long packetID = __builtin_bswap32(longPacketBuffer[0]);
       unsigned long packetCommand = __builtin_bswap32(longPacketBuffer[1]);
 
-      Serial.println(packetID);
-      Serial.println(packetCommand);
 
       // Emergency stop as early as possible
       if (packetCommand == 255) {
@@ -232,6 +232,13 @@ void loop() {
       }
       else {
         unsigned long packetArg = __builtin_bswap32(longPacketBuffer[3]);
+        
+        Serial.print(packetID);
+        Serial.print(": ");
+        Serial.print(packetCommand);
+        Serial.print(", ");
+        Serial.println(packetArg);
+       
         if (millis() - lastEmergencyStop > EMERGENCY_STOP_TIMEOUT) {
           // Only process if we have not just emergency stopped
           processPacket(packetID, packetCommand, packetArg);
