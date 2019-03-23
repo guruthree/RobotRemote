@@ -122,7 +122,7 @@ int main(){ //int argc, char **argv) {
 
         if (SDL_GetTicks() - lastPacketTime > HEARTBEAT_TIMEOUT) {
             sendPacket(0, 0);
-            printf("Sending heartbeat (%d)!\n", nextpacket);
+//            printf("Sending heartbeat (%d)!\n", nextpacket);
         }
 
         // recieve all waiting packets
@@ -141,7 +141,14 @@ int main(){ //int argc, char **argv) {
                     break;
 
                 case SDL_JOYBUTTONDOWN:  /* Handle Joystick Button Presses */
-                    printf("button %i pressed\n", event.jbutton.button);
+                    if (event.jbutton.button == 5) { // RB
+                        sendPacket(10, 0); // enable left motor
+                        sendPacket(20, 0); // enable right motor
+                    }
+                    else {
+                        printf("button %i pressed\n", event.jbutton.button);
+                    }
+                    
                 break;
 
                 case SDL_JOYHATMOTION:  /* Handle Hat Motion */
