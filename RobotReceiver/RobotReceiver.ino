@@ -55,6 +55,11 @@ unsigned long lastPacketTime = 0; // time at which the last packet was recieved
 unsigned long lastEmergencyStop = 0;
 int stopped = 1;
 
+// Battery stuff (check frequency should be higher to avoid WiFi/analogRead() issues it seems)
+#define BATTERY_CHECK_FREQUENCY 10000
+#define BATTERY_CUTOFF_VOLTAGE 7
+unsigned long lastBatteryCheck = 0;
+
 // Declare reset function
 void(*resetFunc) (void) = 0; // https://www.instructables.com/id/two-ways-to-reset-arduino-in-software/
 
@@ -307,4 +312,35 @@ void loop() {
       }
     }
   }
+
+  // a little bit of sleep
+  //delayMicroseconds(10);
+  yield();
+
+  // check the battery level
+  if (millis() - lastBatteryCheck > BATTERY_CHECK_FREQUENCY) {
+    float voltage = analogRead(A0);
+    //float voltage = 183;
+    voltage = voltage / 1024 * 3.25;
+    voltage = voltage / 0.07563025210084;
+    
+  #ifdef DEBUG
+    Serial.print("Battery :");
+    Serial.print(voltage);
+    Serial.println(" V");
+  #endif
+  
+    if (voltage < BATTERY_CUTOFF_VOLTAGE) {
+      emergencyStop();
+      digitalWrite(LED_BUILTIN, LOW);
+      Udp.stop();
+      WiFi.softAPdisconnect(true);
+      while (1) {
+        delay(1000);
+      }
+    }
+    
+    lastBatteryCheck = millis();
+  }
+
 }
