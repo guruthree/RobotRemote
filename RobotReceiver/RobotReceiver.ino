@@ -18,6 +18,7 @@
 #include <ESP8266WiFi.h>
 #include <WiFiUdp.h>
 
+//#define DEBUG
 
 // Pin constants
 #define E_L D8 // "1,2EN" enable driver channels for left motor
@@ -65,6 +66,10 @@ void setLED(int instate) {
     analogWrite(LED_BUILTIN, MYPWMRANGE);
   else
     analogWrite(LED_BUILTIN, MYPWMRANGE-8);
+#ifdef DEBUG
+  Serial.print("LED: ");
+  Serial.println(instate);
+#endif
 }
 
 // Disable H-bridge and stop motors
@@ -79,7 +84,9 @@ void emergencyStop() {
   lastEmergencyStop = millis();
   setLED(HIGH);
   stopped = 1;
-  //  Serial.println("Emergency stopped.");
+#ifdef DEBUG
+  Serial.println("Emergency stopped.");
+#endif
 }
 
 void leftForward(unsigned long velocity) {
@@ -229,7 +236,9 @@ void setup() {
 #ifdef DEBUG
   Serial.begin(115200);
   Serial.println("\nRunning...");
-  Serial.println(sizeof(unsigned long));
+  
+  Serial.print("Soft-AP IP address = ");
+  Serial.println(WiFi.softAPIP());
 #endif
 }
 
