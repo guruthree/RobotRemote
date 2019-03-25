@@ -132,9 +132,9 @@ int main(){ //int argc, char **argv) {
         }
 
         while(SDL_PollEvent(&event) != 0)
-        {  
+        {
             switch(event.type)
-            {  
+            {
                 case SDL_JOYAXISMOTION:  /* Handle Joystick Motion */
                     if (event.jaxis.axis == 1) { // Left up/down
                         if ((event.jaxis.value < -DEADZONE ) || (event.jaxis.value > DEADZONE)) {
