@@ -15,8 +15,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 */
 
 #include <stdio.h>
-#include <SDL/SDL.h>
-#include <SDL/SDL_net.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_net.h>
 
 #define JOYSTICK_MAX 32768
 #define DEADZONE (JOYSTICK_MAX/10)
@@ -92,15 +92,15 @@ int main(){ //int argc, char **argv) {
     printf("The names of the joysticks are:\n");
 	
     for (i = 0; i < SDL_NumJoysticks(); i++) {
-        printf("    %s\n", SDL_JoystickName(i));
+        printf("    %s\n", SDL_JoystickNameForIndex(i));
     }
 
-    SDL_JoystickEventState(SDL_ENABLE);
     joystick = SDL_JoystickOpen(0);
     if (joystick == NULL) {
         fprintf(stderr, "Error: %s\n", SDL_GetError());
         exit(1);
     }
+    SDL_JoystickEventState(SDL_ENABLE);
 
     // Networking...
     SDLNet_ResolveHost(&remoteAddr, REMOTE_HOST, REMOTE_PORT);

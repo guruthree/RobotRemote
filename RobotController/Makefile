@@ -2,8 +2,8 @@
 
 CC=gcc
 DEBUGGER=gdb
-CFLAGS=$(shell sdl-config --cflags)
-LIBS=$(shell sdl-config --libs) -lSDL_net
+CFLAGS=$(shell sdl2-config --cflags)
+LIBS=$(shell sdl2-config --libs) -lSDL2_net
 
 SRCS = robotcontroller.c
 OBJS = $(SRCS:.c=.o)
