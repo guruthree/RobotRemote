@@ -13,7 +13,7 @@ Each packet starts with a sequentially increasing 4 byte unsigned long ID. The n
 Packet:   ID  CMD  ARG
 ```
 
-**Command list**
+### Command list
 
 * Command 0: HELO (Heartbeat) 
 * Command 1: EHLO (Heartbeat response)
@@ -32,11 +32,11 @@ Packet:   ID  CMD  ARG
 
 Plug in a controller, like an Xbox 360 or Xbox One controller. Make sure the system detects it, either via `jstest` or `Set up USB game controllers`.
 
-** Linux **
+### Linux
 
 Install the development libraries for SDL2 and SDL2_net, e.g. `sudo apt-get build-essential install libsdl2-dev libsdl2-net-dev`. Then in the `RobotController` folder, type `make` and `make run` to compile and run. To run in debug mode, type `make debug` and `make debugrun`.
 
-** Windows **
+### Windows
 
 As always, compiling under Windows is a little bit trickier. You can either setup the development environment of your choice with SDL2 and SDL2_net and import robotcontroller.c, or follow these directions to setup a minimal compilation environment without any installation.
 
