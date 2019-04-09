@@ -112,7 +112,7 @@ int main(){ //int argc, char **argv) {
     printf("The names of the joysticks are:\n");
 	
     for (i = 0; i < SDL_NumJoysticks(); i++) {
-        printf("    %s\n", SDL_JoystickNameForIndex(i));
+        printf("    (%i) %s\n", i, SDL_JoystickNameForIndex(i));
     }
 
     // load which joystick from file
