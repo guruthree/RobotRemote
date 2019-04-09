@@ -37,7 +37,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 #define HEARTBEAT_TIMEOUT 500
 
 SDL_Joystick *joystick;
-UDPsocket socket;
+UDPsocket udpsocket;
 IPaddress remoteAddr;
 UDPpacket *packet;
 Uint32 nextpacket = 0;
@@ -53,9 +53,9 @@ void cleanup() {
     if (packet)
         SDLNet_FreePacket(packet);
     packet = NULL;
-    if (socket)
-        SDLNet_UDP_Close(socket);
-    socket = NULL;
+    if (udpsocket)
+        SDLNet_UDP_Close(udpsocket);
+    udpsocket = NULL;
     if (joystick)
         SDL_JoystickClose(joystick);
 #ifdef __linux__
@@ -80,7 +80,7 @@ void sendPacket(Uint32 command, Uint32 argument) {
     SDLNet_Write32(argument, packet->data+8);
 
     packet->len = 12;
-    SDLNet_UDP_Send(socket, -1, packet);
+    SDLNet_UDP_Send(udpsocket, -1, packet);
     lastPacketTime = SDL_GetTicks();
 //    printf("sending packet %i, %i, %i\n", nextpacket, command, argument);
 }
@@ -150,8 +150,8 @@ int main(){ //int argc, char **argv) {
 
     // Networking...
     SDLNet_ResolveHost(&remoteAddr, REMOTE_HOST, REMOTE_PORT);
-    socket = SDLNet_UDP_Open(0);
-    if (!socket) {
+    udpsocket = SDLNet_UDP_Open(0);
+    if (!udpsocket) {
         fprintf(stderr, "SDLNet_UDP_Open: %s\n", SDLNet_GetError());
         exit(4);
     }
@@ -173,7 +173,7 @@ int main(){ //int argc, char **argv) {
         }
 
         // recieve all waiting packets
-        while (SDLNet_UDP_Recv(socket, packet) == 1) {
+        while (SDLNet_UDP_Recv(udpsocket, packet) == 1) {
             printf("Packet recieved...\n");
         }
 
