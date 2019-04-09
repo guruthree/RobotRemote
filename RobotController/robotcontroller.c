@@ -18,6 +18,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 #include <stdlib.h>
 #ifdef __WIN32__
     #define SDL_MAIN_HANDLED
+    #include <windows.h>
 #endif
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_net.h>
@@ -28,7 +29,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 #define JOYSTICK_MAX 32768
 #define DEADZONE (JOYSTICK_MAX/10)
 
-#define CONFIG_FILE "config.ini"
+// the relative path here is required for the Windows INI functions
+#define CONFIG_FILE "./config.ini"
 
 #define MYPWMRANGE 255
 
@@ -138,6 +140,7 @@ int main(){ //int argc, char **argv) {
         gerror = NULL;
     }
 #elif __WIN32__
+    joystickID = GetPrivateProfileInt("controller", "id", 0, CONFIG_FILE);
 #else
     fprintf(stderr, "Need a way to read a .ini file!\n");
 #endif
