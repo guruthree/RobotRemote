@@ -222,6 +222,10 @@ int main(){ //int argc, char **argv) {
                         sendPacket(10, 0); // enable left motor
                         sendPacket(20, 0); // enable right motor
                     }
+                    if (event.jbutton.button == 8) { // XBox Button
+                        running = 0;
+                        cleanup();
+                    }
                     else {
                         sendPacket(255, 0); // any other button, stop!
                         printf("button %i pressed\n", event.jbutton.button);
