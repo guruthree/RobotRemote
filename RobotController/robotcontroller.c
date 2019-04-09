@@ -21,9 +21,14 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 #endif
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_net.h>
+#ifdef __linux__
+    #include <glib.h>
+#endif
 
 #define JOYSTICK_MAX 32768
 #define DEADZONE (JOYSTICK_MAX/10)
+
+#define CONFIG_FILE "config.ini"
 
 #define MYPWMRANGE 255
 
@@ -38,6 +43,11 @@ UDPpacket *packet;
 Uint32 nextpacket = 0;
 unsigned long lastPacketTime = 0;
 
+#ifdef __linux__
+    GKeyFile* gkf;
+    GError *gerror;
+#endif
+
 void cleanup() {
     printf("Exiting...\n");
     if (packet)
@@ -48,6 +58,12 @@ void cleanup() {
     socket = NULL;
     if (joystick)
         SDL_JoystickClose(joystick);
+#ifdef __linux__
+    if (gkf)
+        g_key_file_free(gkf);
+    if (gerror)
+        g_error_free(gerror);
+#endif
     joystick = NULL;
     SDLNet_Quit();
     SDL_Quit();
@@ -99,7 +115,33 @@ int main(){ //int argc, char **argv) {
         printf("    %s\n", SDL_JoystickNameForIndex(i));
     }
 
-    joystick = SDL_JoystickOpen(0);
+    // load which joystick from file
+    int joystickID = 0;
+#ifdef  __linux__
+    gerror = NULL;
+    gkf = g_key_file_new();
+    if (!g_key_file_load_from_file(gkf, CONFIG_FILE, G_KEY_FILE_NONE, &gerror)) {
+        fprintf(stderr, "Could not read config file %s, %s\n", CONFIG_FILE, gerror->message);
+        g_error_free(gerror);
+        gerror = NULL;
+        exit(2);
+    }
+
+    gerror = NULL;
+    joystickID = g_key_file_get_integer(gkf, "controller", "id", &gerror);
+    if (gerror != NULL) {
+        fprintf(stderr, "%s, assuming joystick 0\n",(gerror->message));
+        joystickID = 0;
+        g_error_free(gerror);
+        gerror = NULL;
+    }
+#elif __WIN32__
+#else
+    fprintf(stderr, "Need a way to read a .ini file!\n");
+#endif
+
+    printf("Using joystick %i\n", joystickID);
+    joystick = SDL_JoystickOpen(joystickID);
     if (joystick == NULL) {
         fprintf(stderr, "Error: %s\n", SDL_GetError());
         exit(1);
