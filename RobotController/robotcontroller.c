@@ -61,8 +61,10 @@ void cleanup() {
 #ifdef __linux__
     if (gkf)
         g_key_file_free(gkf);
+    gkf = NULL;
     if (gerror)
         g_error_free(gerror);
+    gerror = NULL;
 #endif
     joystick = NULL;
     SDLNet_Quit();
