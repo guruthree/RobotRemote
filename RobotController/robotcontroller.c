@@ -25,6 +25,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 #ifdef __linux__
     #include <glib.h>
 #endif
+#include <sys/timeb.h>
 
 #define JOYSTICK_MAX 32768
 #define DEADZONE (JOYSTICK_MAX/10)
@@ -89,6 +90,14 @@ void sendPacket(Uint32 command, Uint32 argument) {
 //    printf("sending packet %i, %i, %i\n", nextpacket, command, argument);
 }
 
+void printTime() {
+    struct timeb now;
+    char buffer[26];
+    ftime(&now);
+    struct tm *mytime = localtime(&now.time);
+    strftime(buffer, 26, "%H:%M:%S.", mytime);
+    printf("%s%i ", buffer, now.millitm);
+}
 
 int main(){ //int argc, char **argv) {
     int i;
@@ -96,6 +105,7 @@ int main(){ //int argc, char **argv) {
     // Handle internal quits nicely
     atexit(cleanup);
 
+    printTime();
 	printf("Initialising...\n");
 
     if (SDL_Init( SDL_INIT_JOYSTICK ) < 0) {
@@ -179,6 +189,7 @@ int main(){ //int argc, char **argv) {
 
         // recieve all waiting packets
         while (SDLNet_UDP_Recv(udpsocket, packet) == 1) {
+            printTime();
             printf("Packet recieved...\n");
         }
 
