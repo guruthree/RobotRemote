@@ -96,7 +96,7 @@ void printTime() {
     ftime(&now);
     struct tm *mytime = localtime(&now.time);
     strftime(buffer, 26, "%H:%M:%S.", mytime);
-    printf("%s%i ", buffer, now.millitm);
+    printf("%s%03i ", buffer, now.millitm);
 }
 
 int main(){ //int argc, char **argv) {
@@ -118,14 +118,17 @@ int main(){ //int argc, char **argv) {
     }
 
     i = SDL_NumJoysticks();
+    printTime();
     printf("%i joysticks were found.\n", i);
     if (i == 0) {
         exit(3);
     }
 
+    printTime();
     printf("The names of the joysticks are:\n");
 	
     for (i = 0; i < SDL_NumJoysticks(); i++) {
+        printTime();
         printf("    (%i) %s\n", i, SDL_JoystickNameForIndex(i));
     }
 
@@ -155,6 +158,7 @@ int main(){ //int argc, char **argv) {
     fprintf(stderr, "Need a way to read a .ini file!\n");
 #endif
 
+    printTime();
     printf("Using joystick %i\n", joystickID);
     joystick = SDL_JoystickOpen(joystickID);
     if (joystick == NULL) {
@@ -224,6 +228,7 @@ int main(){ //int argc, char **argv) {
     if (left_max > MYPWMRANGE) left_max = MYPWMRANGE;
     if (right_min < 0) right_min = 0;
     if (right_max > MYPWMRANGE) right_max = MYPWMRANGE;
+    printTime();
     printf("Using trim config left_min=%i, left_max=%i, right_min=%i, right_max=%i\n", left_min, left_max, right_min, right_max);
 
     SDL_Event event;
@@ -287,14 +292,18 @@ int main(){ //int argc, char **argv) {
                     if (event.jbutton.button == 5) { // RB
                         sendPacket(10, 0); // enable left motor
                         sendPacket(20, 0); // enable right motor
+                        printTime();
+                        printf("Enabling motors...\n");
                     }
                     else if (event.jbutton.button == 6 || event.jbutton.button == 8) { // View or XBox Button
                         running = 0;
+                        printTime();
                         cleanup();
                     }
                     else {
                         sendPacket(255, 0); // any other button, stop!
-                        printf("button %i pressed\n", event.jbutton.button);
+                        printTime();
+                        printf("Button %i pressed, assuming emergency stop!\n", event.jbutton.button);
                     }
                     
                 break;
@@ -305,6 +314,7 @@ int main(){ //int argc, char **argv) {
 
                 case SDL_QUIT:
                     running = 0;
+                    printTime();
                     cleanup();
                     break;
             }
