@@ -44,7 +44,7 @@ Plug in a controller, like an Xbox 360 or Xbox One controller. Make sure the sys
 
 ### Linux
 
-Install the development libraries for SDL2 and SDL2_net, e.g. `sudo apt-get build-essential install libsdl2-dev libsdl2-net-dev`. Then in the `RobotController` folder, type `make` and `make run` to compile and run. To run in debug mode, type `make debug` and `make debugrun`.
+Install the development libraries for SDL2, SDL2_net, and GLib 2.0, e.g. `sudo apt-get build-essential install libsdl2-dev libsdl2-net-dev libglib2.0-dev`. Then in the `RobotController` folder, type `make` and `make run` to compile and run. To run in debug mode, type `make debug` and `make debugrun`.
 
 ### Windows
 
