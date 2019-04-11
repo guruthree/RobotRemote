@@ -288,7 +288,7 @@ int main(){ //int argc, char **argv) {
                         sendPacket(10, 0); // enable left motor
                         sendPacket(20, 0); // enable right motor
                     }
-                    if (event.jbutton.button == 6 || event.jbutton.button == 8) { // View or XBox Button
+                    else if (event.jbutton.button == 6 || event.jbutton.button == 8) { // View or XBox Button
                         running = 0;
                         cleanup();
                     }
