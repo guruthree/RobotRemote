@@ -251,10 +251,10 @@ int main(){ //int argc, char **argv) {
                     if (event.jaxis.axis == 1) { // Left up/down
                         if ((event.jaxis.value < -DEADZONE ) || (event.jaxis.value > DEADZONE)) {
                             if (event.jaxis.value > 0) { // down
-                                sendPacket(16, (MYPWMRANGE * (event.jaxis.value - DEADZONE)) / (JOYSTICK_MAX - DEADZONE));
+                                sendPacket(16, ((left_max - left_min) * (event.jaxis.value - DEADZONE)) / (JOYSTICK_MAX - DEADZONE) + left_min);
                             }
                             else { // up
-                                sendPacket(15, (MYPWMRANGE * (-event.jaxis.value - DEADZONE)) / (JOYSTICK_MAX - DEADZONE));
+                                sendPacket(15, ((left_max - left_min) * (-event.jaxis.value - DEADZONE)) / (JOYSTICK_MAX - DEADZONE) + left_min);
                             }
                         }
                         else {
@@ -265,10 +265,10 @@ int main(){ //int argc, char **argv) {
                     else if (event.jaxis.axis == 4) { // Right up/down
                         if ((event.jaxis.value < -DEADZONE ) || (event.jaxis.value > DEADZONE)) {
                             if (event.jaxis.value > 0) { // down
-                                sendPacket(26, (MYPWMRANGE * (event.jaxis.value - DEADZONE)) / (JOYSTICK_MAX - DEADZONE));
+                                sendPacket(26, ((right_max - right_min) * (event.jaxis.value - DEADZONE)) / (JOYSTICK_MAX - DEADZONE) + right_min);
                             }
                             else { // up
-                                sendPacket(25, (MYPWMRANGE * (-event.jaxis.value - DEADZONE)) / (JOYSTICK_MAX - DEADZONE));
+                                sendPacket(25, ((right_max - right_min) * (-event.jaxis.value - DEADZONE)) / (JOYSTICK_MAX - DEADZONE) + right_min);
                             }
                         }
                         else {
