@@ -176,6 +176,56 @@ int main(){ //int argc, char **argv) {
         exit(5);
     }
 
+    // setup trim
+    int left_min = 0, left_max = MYPWMRANGE, right_min = 0, right_max = MYPWMRANGE;
+#ifdef  __linux__
+    gerror = NULL;
+    left_min = g_key_file_get_integer(gkf, "trim", "left_min", &gerror);
+    if (gerror != NULL) {
+        fprintf(stderr, "%s, assuming left_min=0\n", gerror->message);
+        left_min = 0;
+        g_error_free(gerror);
+        gerror = NULL;
+    }
+
+    gerror = NULL;
+    left_max = g_key_file_get_integer(gkf, "trim", "left_max", &gerror);
+    if (gerror != NULL) {
+        fprintf(stderr, "%s, assuming left_max=%i\n", gerror->message, MYPWMRANGE);
+        left_max = MYPWMRANGE;
+        g_error_free(gerror);
+        gerror = NULL;
+    }
+
+    gerror = NULL;
+    right_min = g_key_file_get_integer(gkf, "trim", "right_min", &gerror);
+    if (gerror != NULL) {
+        fprintf(stderr, "%s, assuming right_min=0\n", gerror->message);
+        right_min = 0;
+        g_error_free(gerror);
+        gerror = NULL;
+    }
+
+    gerror = NULL;
+    right_max = g_key_file_get_integer(gkf, "trim", "right_max", &gerror);
+    if (gerror != NULL) {
+        fprintf(stderr, "%s, assuming right_max=%i\n", gerror->message, MYPWMRANGE);
+        right_max = MYPWMRANGE;
+        g_error_free(gerror);
+        gerror = NULL;
+    }
+#elif __WIN32__
+    left_min = GetPrivateProfileInt("trim", "left_min", 0, CONFIG_FILE);
+    left_max = GetPrivateProfileInt("trim", "left_max", MYPWMRANGE, CONFIG_FILE);
+    right_min = GetPrivateProfileInt("trim", "right_min", 0, CONFIG_FILE);
+    right_max = GetPrivateProfileInt("trim", "right_max", MYPWMRANGE, CONFIG_FILE);
+#endif
+    if (left_min < 0) left_min = 0;
+    if (left_max > MYPWMRANGE) left_max = MYPWMRANGE;
+    if (right_min < 0) right_min = 0;
+    if (right_max > MYPWMRANGE) right_max = MYPWMRANGE;
+    printf("Using trim config left_min=%i, left_max=%i, right_min=%i, right_max=%i\n", left_min, left_max, right_min, right_max);
+
     SDL_Event event;
 
     // Main loop
