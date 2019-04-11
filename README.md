@@ -63,7 +63,15 @@ As always, compiling under Windows is a little bit trickier. You can either setu
 * Left analog stick up/down: Left motor
 * Right analog stick up/down: Right motor
 * RB: Unlock motors
-* Any other button: Lock motors (i.e. emergency stop)
+* Any other button: Lock motors (i.e. emergency stop), unless otherwise specified to be a macro in the configuration file.
+
+## RobotController configuration file
+
+RobotController has a configuration file, `config.ini`. It contains three sections, `[controller]`, `[trim]`, and `[buttons]`. The `[controller]` section has one key, `id`, which can be used to specify an alternate joystick. The `[trim]` has four keys, the combinations of left/right_min/max, which can be used to adjust the minimum and maximum speeds for each motor. This should be useful if going full forwards on both joysticks doesn't actually make the robot go quite in a straight line.
+
+The last section `[buttons]` can be used to add macros to each button. Macros are specified in `*.txt` files that contain a comma separated list of time and network packets. Pressing the defined button will send the predefined sequence of network packets at the specified intervals.
+
+Note, under Windows `;` will be treated as the comment indicator, while under Linux `#` will be the comment indicator.
 
 ## LED Status
 
