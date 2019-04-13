@@ -19,6 +19,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 #ifdef __WIN32__
     #define SDL_MAIN_HANDLED
     #include <windows.h>
+    #define STRING_BUFFER_LENGTH 32
 #endif
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_net.h>
@@ -287,6 +288,7 @@ int main(){ //int argc, char **argv) {
 
     // read in button config options
     struct buttonDefinition a_button, b_button, x_button, y_button, up_button, down_button, left_button, right_button;
+    struct buttonDefinition *(allbuttons[]) = {&a_button, &b_button, &x_button, &y_button, &up_button, &down_button, &left_button, &right_button};
 #ifdef  __linux__
     gerror = NULL;
     a_button.value = g_key_file_get_value(gkf, "buttons", "a", &gerror);
@@ -360,17 +362,20 @@ int main(){ //int argc, char **argv) {
         gerror = NULL;
     }
 #elif __WIN32__
-    a_button.value = GetPrivateProfileString("buttons", "a", 0, CONFIG_FILE);
-    b_button.value = GetPrivateProfileString("buttons", "b", 0, CONFIG_FILE);
-    x_button.value = GetPrivateProfileString("buttons", "x", 0, CONFIG_FILE);
-    y_button.value = GetPrivateProfileString("buttons", "y", 0, CONFIG_FILE);
-    up_button.value = GetPrivateProfileString("buttons", "up", 0, CONFIG_FILE);
-    down_button.value = GetPrivateProfileString("buttons", "down", 0, CONFIG_FILE);
-    left_button.value = GetPrivateProfileString("buttons", "left", 0, CONFIG_FILE);
-    right_button.value = GetPrivateProfileString("buttons", "right", 0, CONFIG_FILE);
+    for (i = 0; i < NUM_BUTTONS; i++) {
+        allbuttons[i]->value = (char *)malloc(STRING_BUFFER_LENGTH * sizeof(char));
+    }
+
+    GetPrivateProfileString("buttons", "a", "", a_button.value, STRING_BUFFER_LENGTH, CONFIG_FILE);
+    GetPrivateProfileString("buttons", "b", "", b_button.value, STRING_BUFFER_LENGTH, CONFIG_FILE);
+    GetPrivateProfileString("buttons", "x", "", x_button.value, STRING_BUFFER_LENGTH, CONFIG_FILE);
+    GetPrivateProfileString("buttons", "y", "", y_button.value, STRING_BUFFER_LENGTH, CONFIG_FILE);
+    GetPrivateProfileString("buttons", "up", "", up_button.value, STRING_BUFFER_LENGTH, CONFIG_FILE);
+    GetPrivateProfileString("buttons", "down", "", down_button.value, STRING_BUFFER_LENGTH, CONFIG_FILE);
+    GetPrivateProfileString("buttons", "left", "", left_button.value, STRING_BUFFER_LENGTH, CONFIG_FILE);
+    GetPrivateProfileString("buttons", "right", "", right_button.value, STRING_BUFFER_LENGTH, CONFIG_FILE);
 #endif
 
-    struct buttonDefinition *(allbuttons[]) = {&a_button, &b_button, &x_button, &y_button, &up_button, &down_button, &left_button, &right_button};
     // for each button, read in its macro or set its type appropriately
     for (i = 0; i < NUM_BUTTONS; i++) {
         // start by handling special cases
