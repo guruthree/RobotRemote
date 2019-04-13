@@ -25,6 +25,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 #ifdef __linux__
     #include <glib.h>
 #endif
+#include <time.h>
 #include <sys/timeb.h>
 
 #define JOYSTICK_MAX 32768
