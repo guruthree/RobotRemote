@@ -56,14 +56,18 @@ unsigned long lastPacketTime = 0;
     GError *gerror;
 #endif
 
+enum buttonType {NONE, MACRO, FAST, SLOW, INVERT1, INVERT2};
 struct buttonDefinition {
     char *value;
-    int type; // 0 - macro, 1 - fast, 2 - slow, 3 - invert1, 4 - invert2
+    enum buttonType type; // value from enum buttonType
     int **macro; // [command #][time, forwards/backwards left/right, speed]
     int macrolength; // number of commands in the macro
 };
 
 #define NUM_BUTTONS 8
+
+int speed = 0; // 1 - fast, 2 - slow
+int invert = 1; // 1 or -1
 
 void cleanup() {
     printf("Exiting...\n");
@@ -116,7 +120,29 @@ void printTime() {
 }
 
 void executeButton(struct buttonDefinition *button) {
-    printf("order 66\n");
+    switch (button->type) {
+        case FAST:
+            speed = 1;
+            printf("Speeding up\n");
+            break;
+        case SLOW:
+            speed = 2;
+            printf("Slowing down\n");
+            break;
+        case INVERT1:
+            invert = 1;
+            printf("Invert 1\n");
+            break;
+        case INVERT2:
+            invert = -1;
+            printf("Invert 2\n");
+            break;
+        case MACRO:
+            break;
+        case NONE:
+            sendPacket(255, 0); // any other button, stop!
+            printf("Assuming emergency stop!\n");
+    }
 }
 
 int main(){ //int argc, char **argv) {
