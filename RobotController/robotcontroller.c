@@ -40,6 +40,10 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 #define REMOTE_PORT 7245
 #define HEARTBEAT_TIMEOUT 500
 
+void cleanup();
+void sendPacket(Uint32 command, Uint32 argument);
+void printTime();
+
 SDL_Joystick *joystick;
 UDPsocket udpsocket;
 IPaddress remoteAddr;
