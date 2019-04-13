@@ -58,6 +58,8 @@ unsigned long lastPacketTime = 0;
 
 void cleanup() {
     printf("Exiting...\n");
+    if (packet && udpsocket)
+        sendPacket(255, 0); // make sure the motors are stopped before we go
     if (packet)
         SDLNet_FreePacket(packet);
     packet = NULL;
