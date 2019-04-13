@@ -238,6 +238,98 @@ int main(){ //int argc, char **argv) {
     printTime();
     printf("Using trim config left_min=%i, left_max=%i, right_min=%i, right_max=%i\n", left_min, left_max, right_min, right_max);
 
+
+    // read in button config options
+    char *a_button, *b_button, *x_button, *y_button, *up_button, *down_button, *left_button, *right_button;
+#ifdef  __linux__
+    gerror = NULL;
+    a_button = g_key_file_get_value(gkf, "buttons", "a", &gerror);
+    if (gerror != NULL) {
+        fprintf(stderr, "%s, assuming a is unset\n", gerror->message);
+        a_button = 0;
+        g_error_free(gerror);
+        gerror = NULL;
+    }
+
+    gerror = NULL;
+    b_button = g_key_file_get_value(gkf, "buttons", "b", &gerror);
+    if (gerror != NULL) {
+        fprintf(stderr, "%s, assuming b is unset\n", gerror->message);
+        b_button = 0;
+        g_error_free(gerror);
+        gerror = NULL;
+    }
+
+    gerror = NULL;
+    x_button = g_key_file_get_value(gkf, "buttons", "x", &gerror);
+    if (gerror != NULL) {
+        fprintf(stderr, "%s, assuming x is unset\n", gerror->message);
+        x_button = 0;
+        g_error_free(gerror);
+        gerror = NULL;
+    }
+
+    gerror = NULL;
+    y_button = g_key_file_get_value(gkf, "buttons", "y", &gerror);
+    if (gerror != NULL) {
+        fprintf(stderr, "%s, assuming y is unset\n", gerror->message);
+        y_button = 0;
+        g_error_free(gerror);
+        gerror = NULL;
+    }
+
+    gerror = NULL;
+    up_button = g_key_file_get_value(gkf, "buttons", "up", &gerror);
+    if (gerror != NULL) {
+        fprintf(stderr, "%s, assuming up is unset\n", gerror->message);
+        up_button = 0;
+        g_error_free(gerror);
+        gerror = NULL;
+    }
+
+    gerror = NULL;
+    down_button = g_key_file_get_value(gkf, "buttons", "down", &gerror);
+    if (gerror != NULL) {
+        fprintf(stderr, "%s, assuming down is unset\n", gerror->message);
+        down_button = 0;
+        g_error_free(gerror);
+        gerror = NULL;
+    }
+
+    gerror = NULL;
+    left_button = g_key_file_get_value(gkf, "buttons", "left", &gerror);
+    if (gerror != NULL) {
+        fprintf(stderr, "%s, assuming left is unset\n", gerror->message);
+        left_button = 0;
+        g_error_free(gerror);
+        gerror = NULL;
+    }
+
+    gerror = NULL;
+    right_button = g_key_file_get_value(gkf, "buttons", "right", &gerror);
+    if (gerror != NULL) {
+        fprintf(stderr, "%s, assuming right is unset\n", gerror->message);
+        right_button = 0;
+        g_error_free(gerror);
+        gerror = NULL;
+    }
+#elif __WIN32__
+    a_button = GetPrivateProfileString("buttons", "a", 0, CONFIG_FILE);
+    b_button = GetPrivateProfileString("buttons", "b", 0, CONFIG_FILE);
+    x_button = GetPrivateProfileString("buttons", "x", 0, CONFIG_FILE);
+    y_button = GetPrivateProfileString("buttons", "y", 0, CONFIG_FILE);
+    up_button = GetPrivateProfileString("buttons", "up", 0, CONFIG_FILE);
+    down_button = GetPrivateProfileString("buttons", "down", 0, CONFIG_FILE);
+    left_button = GetPrivateProfileString("buttons", "left", 0, CONFIG_FILE);
+    right_button = GetPrivateProfileString("buttons", "right", 0, CONFIG_FILE);
+#endif
+
+
+    printTime();
+    printf("Using a=%s, b=%s, x=%s, y=%s up=%s, down=%s, left=%s, right=%s\n", a_button, b_button, x_button, y_button, up_button, down_button, left_button, right_button);
+
+
+
     SDL_Event event;
 
     // Main loop
