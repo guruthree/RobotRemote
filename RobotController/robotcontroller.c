@@ -63,6 +63,8 @@ struct buttonDefinition {
     int macrolength; // number of commands in the macro
 };
 
+#define NUM_BUTTONS 8
+
 void cleanup() {
     printf("Exiting...\n");
     if (packet && udpsocket)
@@ -335,6 +337,10 @@ int main(){ //int argc, char **argv) {
     right_button.value = GetPrivateProfileString("buttons", "right", 0, CONFIG_FILE);
 #endif
 
+    struct buttonDefinition *(allbuttons[]) = {&a_button, &b_button, &x_button, &y_button, &up_button, &down_button, &left_button, &right_button};
+    // for each button, read in its macro or set its type appropriately
+    for (i = 0; i < NUM_BUTTONS; i++) {
+    }
 
     printTime();
     printf("Using a=%s, b=%s, x=%s, y=%s up=%s, down=%s, left=%s, right=%s\n", \
