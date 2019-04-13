@@ -111,6 +111,10 @@ void printTime() {
     printf("%s%03i ", buffer, now.millitm);
 }
 
+void executeButton(struct buttonDefinition *button) {
+    printf("order 66\n");
+}
+
 int main(){ //int argc, char **argv) {
     int i;
 
@@ -406,6 +410,26 @@ int main(){ //int argc, char **argv) {
                         printTime();
                         cleanup();
                     }
+                    else if (event.jbutton.button == 0) {
+                        printTime();
+                        printf("a button: ");
+                        executeButton(&a_button);
+                    }
+                    else if (event.jbutton.button == 1) {
+                        printTime();
+                        printf("b button: ");
+                        executeButton(&b_button);
+                    }
+                    else if (event.jbutton.button == 2) {
+                        printTime();
+                        printf("x button: ");
+                        executeButton(&x_button);
+                    }
+                    else if (event.jbutton.button == 3) {
+                        printTime();
+                        printf("y button: ");
+                        executeButton(&y_button);
+                    }
                     else {
                         sendPacket(255, 0); // any other button, stop!
                         printTime();
@@ -415,7 +439,29 @@ int main(){ //int argc, char **argv) {
                 break;
 
                 case SDL_JOYHATMOTION:  /* Handle Hat Motion */
-                    printf("dpad %i pressed\n", event.jhat.value);
+                    if (event.jhat.value == 1) {
+                        printTime();
+                        printf("up button: ");
+                        executeButton(&up_button);
+                    }
+                    else if (event.jhat.value == 4) {
+                        printTime();
+                        printf("down button: ");
+                        executeButton(&down_button);
+                    }
+                    else if (event.jhat.value == 8) {
+                        printTime();
+                        printf("left button: ");
+                        executeButton(&left_button);
+                    }
+                    else if (event.jhat.value == 2) {
+                        printTime();
+                        printf("right button: ");
+                        executeButton(&right_button);
+                    }
+                    else {
+//                        printf("dpad %i pressed\n", event.jhat.value);
+                    }
                 break;
 
                 case SDL_QUIT:
