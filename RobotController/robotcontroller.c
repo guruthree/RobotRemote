@@ -375,8 +375,10 @@ int main(){ //int argc, char **argv) {
     }
 
     printTime();
-    printf("Using a=%s, b=%s, x=%s, y=%s up=%s, down=%s, left=%s, right=%s\n", \
-        a_button.value, b_button.value, x_button.value, y_button.value, \
+    printf("Using a=%s, b=%s, x=%s, y=%s\n", \
+        a_button.value, b_button.value, x_button.value, y_button.value);
+    printTime();
+    printf("Using up=%s, down=%s, left=%s, right=%s\n", \
         up_button.value, down_button.value, left_button.value, right_button.value);
 
 
