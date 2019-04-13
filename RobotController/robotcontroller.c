@@ -125,23 +125,29 @@ void executeButton(struct buttonDefinition *button) {
             speed = 1;
             printf("Speeding up\n");
             break;
+
         case SLOW:
             speed = 2;
             printf("Slowing down\n");
             break;
+
         case INVERT1:
             invert = 1;
             printf("Invert 1\n");
             break;
+
         case INVERT2:
             invert = -1;
             printf("Invert 2\n");
             break;
+
         case MACRO:
             break;
+
         case NONE:
             sendPacket(255, 0); // any other button, stop!
             printf("Assuming emergency stop!\n");
+            break;
     }
 }
 
@@ -469,8 +475,7 @@ int main(){ //int argc, char **argv) {
                         printTime();
                         printf("Button %i pressed, assuming emergency stop!\n", event.jbutton.button);
                     }
-                    
-                break;
+                    break;
 
                 case SDL_JOYHATMOTION:  /* Handle Hat Motion */
                     if (event.jhat.value == 1) {
@@ -496,7 +501,7 @@ int main(){ //int argc, char **argv) {
                     else {
 //                        printf("dpad %i pressed\n", event.jhat.value);
                     }
-                break;
+                    break;
 
                 case SDL_QUIT:
                     running = 0;
