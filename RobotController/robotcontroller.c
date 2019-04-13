@@ -59,6 +59,8 @@ unsigned long lastPacketTime = 0;
 struct buttonDefinition {
     char *value;
     int type; // 0 - macro, 1 - fast, 2 - slow, 3 - invert1, 4 - invert2
+    int **macro; // [command #][time, forwards/backwards left/right, speed]
+    int macrolength; // number of commands in the macro
 };
 
 void cleanup() {
