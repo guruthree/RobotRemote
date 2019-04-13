@@ -27,6 +27,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 #endif
 #include <time.h>
 #include <sys/timeb.h>
+#include <unistd.h>
 
 #define JOYSTICK_MAX 32768
 #define DEADZONE (JOYSTICK_MAX/10)
@@ -372,6 +373,33 @@ int main(){ //int argc, char **argv) {
     struct buttonDefinition *(allbuttons[]) = {&a_button, &b_button, &x_button, &y_button, &up_button, &down_button, &left_button, &right_button};
     // for each button, read in its macro or set its type appropriately
     for (i = 0; i < NUM_BUTTONS; i++) {
+        // start by handling special cases
+        if (strcmp(allbuttons[i]->value, "fast") == 0) { //strcmp returns 0 when the strings match
+            allbuttons[i]->type = FAST;
+        }
+        else if (strcmp(allbuttons[i]->value, "slow") == 0) {
+            allbuttons[i]->type = SLOW;
+        }
+        else if (strcmp(allbuttons[i]->value, "invert1") == 0) {
+            allbuttons[i]->type = INVERT1;
+        }
+        else if (strcmp(allbuttons[i]->value, "invert2") == 0) {
+            allbuttons[i]->type = INVERT2;
+        }
+        else if (strlen(allbuttons[i]->value) == 0) { // nothing is programmed
+            allbuttons[i]->type = NONE;
+        }
+        else { // read in macro
+        	if (access(allbuttons[i]->value, F_OK) != 0) { // the macro file does not exist!
+                fprintf(stderr, "error reading %s, assuming no function\n", allbuttons[i]->value);
+                allbuttons[i]->value = "";
+                allbuttons[i]->type = NONE;
+            }
+            else {
+                FILE *fid = fopen(allbuttons[i]->value, "r");
+                fclose(fid);
+            }
+        }
     }
 
     printTime();
