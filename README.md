@@ -58,11 +58,18 @@ As always, compiling under Windows is a little bit trickier. You can either setu
 6. Run `compile.bat` by double-clicking. A console dialog with any compile-time output should appear.
 7. Run `robotcontroller.exe`.
 
-## Controls
+## Default Controls
 
 * Left analog stick up/down: Left motor
 * Right analog stick up/down: Right motor
-* RB: Unlock motors
+* Menu button: Unlock/Enable motors
+* A button: drive forwards
+* B button: drive upside down
+* LB button: drive slow
+* RB button: drive fast
+* View/Xbox button: exit
+* Left/right stick button: stop macro
+* D-pad up button: run stophammertime.txt macro
 * Any other button: Lock motors (i.e. emergency stop), unless otherwise specified to be a macro in the configuration file.
 
 ## RobotController configuration file
@@ -72,6 +79,20 @@ RobotController has a configuration file, `config.ini`. It contains three sectio
 The last section `[buttons]` can be used to add macros to each button. Macros are specified in `*.txt` files that contain a comma separated list of time and network packets. Pressing the defined button will send the predefined sequence of network packets at the specified intervals.
 
 Note, under Windows `;` will be treated as the comment indicator, while under Linux `#` will be the comment indicator.
+
+### Button configuration
+
+Each button can be mapped to either a macro, or one of the following commands:
+
+* `fast`: Run motors at full-speed
+* `slow`: Run motors at half-speed
+* `invert1`: Run motors forwards
+* `invert2`: Reverse motor directions and flip left and right
+* `enable`: Unlock motors
+* `disable`: Lock motors
+* `stop`: Stop any running macros
+* `exit`: Quit the controller
+* nothing: Emergency stop!
 
 ## LED Status
 
