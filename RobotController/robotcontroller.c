@@ -541,7 +541,6 @@ int main(){ //int argc, char **argv) {
                 case SDL_QUIT:
                     running = 0;
                     printTime();
-                    cleanup();
                     break;
             }
         }
