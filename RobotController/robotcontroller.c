@@ -66,7 +66,8 @@ struct buttonDefinition {
     int macrolength; // number of commands in the macro
 };
 
-#define NUM_BUTTONS 8
+// the number of buttons on the Xbox controller plus the D-pad directions
+#define NUM_BUTTONS (11+4)
 
 int speed = 1; // 1 - fast, 2 - slow
 int invert = 1; // 1 or -1
@@ -286,94 +287,37 @@ int main(){ //int argc, char **argv) {
     printf("Using trim config left_min=%i, left_max=%i, right_min=%i, right_max=%i\n", left_min, left_max, right_min, right_max);
 
 
+    // setup button config variables
+    // a (0), b (1), x (2), y (3), lb (4), rb (5), view (6), menu (7), xbox (8), ls (9), rs (10), up (11), down (12), left (13), right (14)
+    struct buttonDefinition a_button, b_button, x_button, y_button, \
+        lb_button, rb_button, \
+        view_button, menu_button, xbox_button, \
+        ls_button, rs_button, \
+        up_button, down_button, left_button, right_button;
+    struct buttonDefinition *(allbuttons[]) = {&a_button, &b_button, &x_button, &y_button, \
+        &lb_button, &rb_button, \
+        &view_button, &menu_button, &xbox_button, \
+        &ls_button, &rs_button, \
+        &up_button, &down_button, &left_button, &right_button};
+    const char *buttonnames[] = {"a", "b", "x", "y", "lb", "rb", "view", "menu", "xbox", "ls", "rs", "up", "down", "left", "right"};
+
     // read in button config options
-    struct buttonDefinition a_button, b_button, x_button, y_button, up_button, down_button, left_button, right_button;
-    struct buttonDefinition *(allbuttons[]) = {&a_button, &b_button, &x_button, &y_button, &up_button, &down_button, &left_button, &right_button};
 #ifdef  __linux__
-    gerror = NULL;
-    a_button.value = g_key_file_get_value(gkf, "buttons", "a", &gerror);
-    if (gerror != NULL) {
-        fprintf(stderr, "%s, assuming a is unset\n", gerror->message);
-        a_button.value = NULL;
-        g_error_free(gerror);
+    for (i = 0; i < NUM_BUTTONS; i++) {
         gerror = NULL;
-    }
-
-    gerror = NULL;
-    b_button.value = g_key_file_get_value(gkf, "buttons", "b", &gerror);
-    if (gerror != NULL) {
-        fprintf(stderr, "%s, assuming b is unset\n", gerror->message);
-        b_button.value = NULL;
-        g_error_free(gerror);
-        gerror = NULL;
-    }
-
-    gerror = NULL;
-    x_button.value = g_key_file_get_value(gkf, "buttons", "x", &gerror);
-    if (gerror != NULL) {
-        fprintf(stderr, "%s, assuming x is unset\n", gerror->message);
-        x_button.value = NULL;
-        g_error_free(gerror);
-        gerror = NULL;
-    }
-
-    gerror = NULL;
-    y_button.value = g_key_file_get_value(gkf, "buttons", "y", &gerror);
-    if (gerror != NULL) {
-        fprintf(stderr, "%s, assuming y is unset\n", gerror->message);
-        y_button.value = NULL;
-        g_error_free(gerror);
-        gerror = NULL;
-    }
-
-    gerror = NULL;
-    up_button.value = g_key_file_get_value(gkf, "buttons", "up", &gerror);
-    if (gerror != NULL) {
-        fprintf(stderr, "%s, assuming up is unset\n", gerror->message);
-        up_button.value = NULL;
-        g_error_free(gerror);
-        gerror = NULL;
-    }
-
-    gerror = NULL;
-    down_button.value = g_key_file_get_value(gkf, "buttons", "down", &gerror);
-    if (gerror != NULL) {
-        fprintf(stderr, "%s, assuming down is unset\n", gerror->message);
-        down_button.value = NULL;
-        g_error_free(gerror);
-        gerror = NULL;
-    }
-
-    gerror = NULL;
-    left_button.value = g_key_file_get_value(gkf, "buttons", "left", &gerror);
-    if (gerror != NULL) {
-        fprintf(stderr, "%s, assuming left is unset\n", gerror->message);
-        left_button.value = NULL;
-        g_error_free(gerror);
-        gerror = NULL;
-    }
-
-    gerror = NULL;
-    right_button.value = g_key_file_get_value(gkf, "buttons", "right", &gerror);
-    if (gerror != NULL) {
-        fprintf(stderr, "%s, assuming right is unset\n", gerror->message);
-        right_button.value = NULL;
-        g_error_free(gerror);
-        gerror = NULL;
+        allbuttons[i]->value = g_key_file_get_value(gkf, "buttons", buttonnames[i], &gerror);
+        if (gerror != NULL) {
+            fprintf(stderr, "%s, assuming a is unset\n", gerror->message);
+            a_button.value = NULL;
+            g_error_free(gerror);
+            gerror = NULL;
+        }
     }
 #elif __WIN32__
     for (i = 0; i < NUM_BUTTONS; i++) {
         allbuttons[i]->value = (char *)malloc(STRING_BUFFER_LENGTH * sizeof(char));
-    }
-
-    GetPrivateProfileString("buttons", "a", "", a_button.value, STRING_BUFFER_LENGTH, CONFIG_FILE);
-    GetPrivateProfileString("buttons", "b", "", b_button.value, STRING_BUFFER_LENGTH, CONFIG_FILE);
-    GetPrivateProfileString("buttons", "x", "", x_button.value, STRING_BUFFER_LENGTH, CONFIG_FILE);
-    GetPrivateProfileString("buttons", "y", "", y_button.value, STRING_BUFFER_LENGTH, CONFIG_FILE);
-    GetPrivateProfileString("buttons", "up", "", up_button.value, STRING_BUFFER_LENGTH, CONFIG_FILE);
-    GetPrivateProfileString("buttons", "down", "", down_button.value, STRING_BUFFER_LENGTH, CONFIG_FILE);
-    GetPrivateProfileString("buttons", "left", "", left_button.value, STRING_BUFFER_LENGTH, CONFIG_FILE);
-    GetPrivateProfileString("buttons", "right", "", right_button.value, STRING_BUFFER_LENGTH, CONFIG_FILE);
+        GetPrivateProfileString("buttons", buttonnames[i], "", allbuttons[i]->value, STRING_BUFFER_LENGTH, CONFIG_FILE);
+    });
 #endif
 
     // for each button, read in its macro or set its type appropriately
@@ -407,9 +351,16 @@ int main(){ //int argc, char **argv) {
         }
     }
 
+    // print a summary of the buttons
     printTime();
     printf("Using a=%s, b=%s, x=%s, y=%s\n", \
         a_button.value, b_button.value, x_button.value, y_button.value);
+    printTime();
+    printf("Using lb=%s, rb=%s, view=%s, menu=%s\n", \
+        lb_button.value, rb_button.value, view_button.value, menu_button.value);
+    printTime();
+    printf("Using xbox=%s, ls=%s, rs=%s\n", \
+        xbox_button.value, ls_button.value, rs_button.value);
     printTime();
     printf("Using up=%s, down=%s, left=%s, right=%s\n", \
         up_button.value, down_button.value, left_button.value, right_button.value);
@@ -474,42 +425,9 @@ int main(){ //int argc, char **argv) {
                     break;
 
                 case SDL_JOYBUTTONDOWN:  /* Handle Joystick Button Presses */
-                    if (event.jbutton.button == 5) { // RB
-                        sendPacket(10, 0); // enable left motor
-                        sendPacket(20, 0); // enable right motor
-                        printTime();
-                        printf("Enabling motors...\n");
-                    }
-                    else if (event.jbutton.button == 6 || event.jbutton.button == 8) { // View or XBox Button
-                        running = 0;
-                        printTime();
-                        cleanup();
-                    }
-                    else if (event.jbutton.button == 0) {
-                        printTime();
-                        printf("a button: ");
-                        executeButton(&a_button);
-                    }
-                    else if (event.jbutton.button == 1) {
-                        printTime();
-                        printf("b button: ");
-                        executeButton(&b_button);
-                    }
-                    else if (event.jbutton.button == 2) {
-                        printTime();
-                        printf("x button: ");
-                        executeButton(&x_button);
-                    }
-                    else if (event.jbutton.button == 3) {
-                        printTime();
-                        printf("y button: ");
-                        executeButton(&y_button);
-                    }
-                    else {
-                        sendPacket(255, 0); // any other button, stop!
-                        printTime();
-                        printf("Button %i pressed, assuming emergency stop!\n", event.jbutton.button);
-                    }
+                    printTime();
+                    printf("%s button: ", buttonnames[event.jbutton.button]);
+                    executeButton(allbuttons[event.jbutton.button]);
                     break;
 
                 case SDL_JOYHATMOTION:  /* Handle Hat Motion */
