@@ -58,7 +58,7 @@ unsigned long lastPacketTime = 0;
     GError *gerror;
 #endif
 
-enum buttonType {NONE, MACRO, FAST, SLOW, INVERT1, INVERT2};
+enum buttonType {NONE, MACRO, FAST, SLOW, INVERT1, INVERT2, ENABLE, DISABLE, STOP, EXIT};
 struct buttonDefinition {
     char *value;
     enum buttonType type; // value from enum buttonType
@@ -124,6 +124,29 @@ void printTime() {
 
 void executeButton(struct buttonDefinition *button) {
     switch (button->type) {
+        case ENABLE:
+            sendPacket(10, 0); // enable left motor
+            sendPacket(20, 0); // enable right motor
+            printf("Enabling motors...\n");
+            break;
+
+        case DISABLE:
+            sendPacket(11, 0); // disable left motor
+            sendPacket(21, 0); // disable right motor
+            printf("Disabling motors\n");
+            break;
+
+        case STOP:
+            printf("Interrupting running macros\n");
+            break;
+
+        case EXIT:
+            printf("Exit?\n");
+            SDL_Event sdlevent;
+            sdlevent.type = SDL_QUIT;
+            SDL_PushEvent(&sdlevent);
+            break;
+
         case FAST:
             speed = 1;
             printf("Speeding up\n");
@@ -334,6 +357,15 @@ int main(){ //int argc, char **argv) {
         }
         else if (strcmp(allbuttons[i]->value, "invert2") == 0) {
             allbuttons[i]->type = INVERT2;
+        }
+        else if (strcmp(allbuttons[i]->value, "enable") == 0) {
+            allbuttons[i]->type = ENABLE;
+        }
+        else if (strcmp(allbuttons[i]->value, "stop") == 0) {
+            allbuttons[i]->type = STOP;
+        }
+        else if (strcmp(allbuttons[i]->value, "exit") == 0) {
+            allbuttons[i]->type = EXIT;
         }
         else if (strlen(allbuttons[i]->value) == 0) { // nothing is programmed
             allbuttons[i]->type = NONE;
