@@ -6,7 +6,7 @@ DEBUGGER = gdb
 CFLAGS = $(shell sdl2-config --cflags) $(shell pkg-config --cflags glib-2.0)
 LIBS = $(shell sdl2-config --libs) $(shell pkg-config --libs glib-2.0) -lSDL2_net
 
-SRCS = robotcontroller.c
+SRCS = robotcontroller.c controllerfunctions.c
 OBJS = $(SRCS:.c=.o)
 EXE = robotcontroller
 
