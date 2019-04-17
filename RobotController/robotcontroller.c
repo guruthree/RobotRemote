@@ -34,11 +34,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 
 SDL_Joystick *joystick;
-UDPsocket udpsocket;
-IPaddress remoteAddr;
-UDPpacket *packet;
-Uint32 nextpacket = 0;
-unsigned long lastPacketTime = 0;
+UDPremote remote;
 
 
 int speed = 1; // 1 - fast, 2 - slow
@@ -46,14 +42,14 @@ int invert = 1; // 1 or -1
 
 void cleanup() {
     printf("Exiting...\n");
-    if (packet && udpsocket)
-        sendPacket(255, 0); // make sure the motors are stopped before we go
-    if (packet)
-        SDLNet_FreePacket(packet);
-    packet = NULL;
-    if (udpsocket)
-        SDLNet_UDP_Close(udpsocket);
-    udpsocket = NULL;
+    if (remote.packet && remote.udpsocket)
+        sendPacket(&remote, 255, 0); // make sure the motors are stopped before we go
+    if (remote.packet)
+        SDLNet_FreePacket(remote.packet);
+    remote.packet = NULL;
+    if (remote.udpsocket)
+        SDLNet_UDP_Close(remote.udpsocket);
+    remote.udpsocket = NULL;
     if (joystick)
         SDL_JoystickClose(joystick);
     joystick = NULL;
@@ -62,33 +58,18 @@ void cleanup() {
     exit(0);
 }
 
-void sendPacket(Uint32 command, Uint32 argument) {
-    packet->address.host = remoteAddr.host;
-    packet->address.port = remoteAddr.port;
-
-    nextpacket++;
-    SDLNet_Write32(nextpacket, packet->data);
-    SDLNet_Write32(command, packet->data+4);
-    SDLNet_Write32(argument, packet->data+8);
-
-    packet->len = 12;
-    SDLNet_UDP_Send(udpsocket, -1, packet);
-    lastPacketTime = SDL_GetTicks();
-//    printf("sending packet %i, %i, %i\n", nextpacket, command, argument);
-}
-
 
 void executeButton(struct buttonDefinition *button) {
     switch (button->type) {
         case ENABLE:
-            sendPacket(10, 0); // enable left motor
-            sendPacket(20, 0); // enable right motor
+            sendPacket(&remote, 10, 0); // enable left motor
+            sendPacket(&remote, 20, 0); // enable right motor
             printf("Enabling motors...\n");
             break;
 
         case DISABLE:
-            sendPacket(11, 0); // disable left motor
-            sendPacket(21, 0); // disable right motor
+            sendPacket(&remote, 11, 0); // disable left motor
+            sendPacket(&remote, 21, 0); // disable right motor
             printf("Disabling motors\n");
             break;
 
@@ -127,7 +108,7 @@ void executeButton(struct buttonDefinition *button) {
             break;
 
         case NONE:
-            sendPacket(255, 0); // any other button, stop!
+            sendPacket(&remote, 255, 0); // any other button, stop!
             printf("Assuming emergency stop!\n");
             break;
     }
@@ -195,14 +176,16 @@ int main(){ //int argc, char **argv) {
     SDL_JoystickEventState(SDL_ENABLE);
 
     // Networking...
-    SDLNet_ResolveHost(&remoteAddr, REMOTE_HOST, SERVER_PORT);
-    udpsocket = SDLNet_UDP_Open(0);
-    if (!udpsocket) {
+    remote.nextpacket = 0;
+    remote.lastPacketTime = SDL_GetTicks();
+    SDLNet_ResolveHost(&remote.remoteAddr, REMOTE_HOST, SERVER_PORT);
+    remote.udpsocket = SDLNet_UDP_Open(0);
+    if (!remote.udpsocket) {
         fprintf(stderr, "SDLNet_UDP_Open: %s\n", SDLNet_GetError());
         exit(4);
     }
-    packet = SDLNet_AllocPacket(48);
-    if (!packet) {
+    remote.packet = SDLNet_AllocPacket(48);
+    if (!remote.packet) {
         fprintf(stderr, "SDLNet_AllocPacket: %s\n", SDLNet_GetError());
         exit(5);
     }
@@ -325,13 +308,13 @@ int main(){ //int argc, char **argv) {
     int running = 1;
     while (running) {
 
-        if (SDL_GetTicks() - lastPacketTime > HEARTBEAT_TIMEOUT) {
-            sendPacket(0, 0);
+        if (SDL_GetTicks() - remote.lastPacketTime > HEARTBEAT_TIMEOUT) {
+            sendPacket(&remote, 0, 0);
 //            printf("Sending heartbeat (%d)!\n", nextpacket);
         }
 
         // recieve all waiting packets
-        while (SDLNet_UDP_Recv(udpsocket, packet) == 1) {
+        while (SDLNet_UDP_Recv(remote.udpsocket, remote.packet) == 1) {
             printTime();
             printf("Packet recieved...\n");
         }
@@ -344,29 +327,29 @@ int main(){ //int argc, char **argv) {
                     if (event.jaxis.axis == 1) { // Left up/down
                         if ((event.jaxis.value < -DEADZONE ) || (event.jaxis.value > DEADZONE)) {
                             if (invert*event.jaxis.value > 0) { // down
-                                sendPacket(16, ((left_max - left_min) * (invert*event.jaxis.value - DEADZONE)) / (JOYSTICK_MAX - DEADZONE) / speed  + left_min);
+                                sendPacket(&remote, 16, ((left_max - left_min) * (invert*event.jaxis.value - DEADZONE)) / (JOYSTICK_MAX - DEADZONE) / speed  + left_min);
                             }
                             else { // up
-                                sendPacket(15, ((left_max - left_min) * (invert*-event.jaxis.value - DEADZONE)) / (JOYSTICK_MAX - DEADZONE) / speed  + left_min);
+                                sendPacket(&remote, 15, ((left_max - left_min) * (invert*-event.jaxis.value - DEADZONE)) / (JOYSTICK_MAX - DEADZONE) / speed  + left_min);
                             }
                         }
                         else {
-                            sendPacket(15, 0);
-                            sendPacket(16, 0);
+                            sendPacket(&remote, 15, 0);
+                            sendPacket(&remote, 16, 0);
                         }
                     }
                     else if (event.jaxis.axis == 4) { // Right up/down
                         if ((event.jaxis.value < -DEADZONE ) || (event.jaxis.value > DEADZONE)) {
                             if (invert*event.jaxis.value > 0) { // down
-                                sendPacket(26, ((right_max - right_min) * (invert*event.jaxis.value - DEADZONE)) / (JOYSTICK_MAX - DEADZONE) / speed + right_min);
+                                sendPacket(&remote, 26, ((right_max - right_min) * (invert*event.jaxis.value - DEADZONE)) / (JOYSTICK_MAX - DEADZONE) / speed + right_min);
                             }
                             else { // up
-                                sendPacket(25, ((right_max - right_min) * (invert*-event.jaxis.value - DEADZONE)) / (JOYSTICK_MAX - DEADZONE) / speed  + right_min);
+                                sendPacket(&remote, 25, ((right_max - right_min) * (invert*-event.jaxis.value - DEADZONE)) / (JOYSTICK_MAX - DEADZONE) / speed  + right_min);
                             }
                         }
                         else {
-                            sendPacket(25, 0);
-                            sendPacket(26, 0);
+                            sendPacket(&remote, 25, 0);
+                            sendPacket(&remote, 26, 0);
                         }
                     }
                     else {
