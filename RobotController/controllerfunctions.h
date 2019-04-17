@@ -19,6 +19,8 @@ typedef struct {
 
 void sendPacket(UDPremote *remote, Uint32 command, Uint32 argument);
 
+void executeButton(UDPremote *remote, robotState *robottsate, buttonDefinition *button);
+
 void cleanup();
 
 
