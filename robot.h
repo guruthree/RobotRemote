@@ -1,5 +1,8 @@
 /* constants for both the controller and receiver */
 
+#ifndef _ROBOT_H_
+#define _ROBOT_H_ 1
+
 // Local PWM range to match what the remote sends
 #define MYPWMRANGE 255
 
@@ -20,4 +23,4 @@
 enum motor {LEFT, RIGHT};
 const char *motorsnames[] = {"left", "right"};
 
-
+#endif /* _ROBOT_H_ */
