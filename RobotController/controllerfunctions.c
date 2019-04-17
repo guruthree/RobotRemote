@@ -29,7 +29,7 @@ void sendPacket(UDPremote *remote, Uint32 command, Uint32 argument) {
 //    printf("sending packet %i, %i, %i\n", remote->nextpacket, command, argument);
 }
 
-void executeButton(UDPremote *remote, robotState *robotstate, buttonDefinition *button) {
+void executeButton(UDPremote *remote, robotState *robotstate, const buttonDefinition *button) {
     switch (button->type) {
         case ENABLE:
             sendPacket(remote, 10, 0); // enable left motor
