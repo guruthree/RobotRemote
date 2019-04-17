@@ -20,7 +20,7 @@ typedef struct {
     int **macro; // [command #][time, forwards/backwards left/right, speed]
     int macrolength; // number of commands in the macro
 } buttonDefinition;
-const char *buttonnames[] = {"a", "b", "x", "y", "lb", "rb", "view", "menu", "xbox", "ls", "rs", "up", "down", "left", "right"};
+extern const char *buttonnames[];
 
 typedef struct {
     int speed; // = 1; // 1 - fast, 2 - slow
