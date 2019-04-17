@@ -22,4 +22,9 @@ typedef struct {
 } buttonDefinition;
 const char *buttonnames[] = {"a", "b", "x", "y", "lb", "rb", "view", "menu", "xbox", "ls", "rs", "up", "down", "left", "right"};
 
+typedef struct {
+    int speed; // = 1; // 1 - fast, 2 - slow
+    int invert; // = 1; // 1 or -1
+} robotState;
+
 #endif /* _ROBOTCONTROLLER_H_ */

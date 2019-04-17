@@ -35,10 +35,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 SDL_Joystick *joystick;
 UDPremote remote;
-
-
-int speed = 1; // 1 - fast, 2 - slow
-int invert = 1; // 1 or -1
+robotState robotstate;
 
 void cleanup() {
     printf("Exiting...\n");
@@ -85,22 +82,22 @@ void executeButton(buttonDefinition *button) {
             break;
 
         case FAST:
-            speed = 1;
+            robotstate.speed = 1;
             printf("Speeding up\n");
             break;
 
         case SLOW:
-            speed = 2;
+            robotstate.speed = 2;
             printf("Slowing down\n");
             break;
 
         case INVERT1:
-            invert = 1;
+            robotstate.invert = 1;
             printf("Invert 1\n");
             break;
 
         case INVERT2:
-            invert = -1;
+            robotstate.invert = -1;
             printf("Invert 2\n");
             break;
 
@@ -116,6 +113,8 @@ void executeButton(buttonDefinition *button) {
 
 int main(){ //int argc, char **argv) {
     int i;
+    robotstate.speed = 1;
+    robotstate.invert = 1;
 
     // Handle internal quits nicely
     atexit(cleanup);
@@ -325,11 +324,11 @@ int main(){ //int argc, char **argv) {
                 case SDL_JOYAXISMOTION:  /* Handle Joystick Motion */
                     if (event.jaxis.axis == 1) { // Left up/down
                         if ((event.jaxis.value < -DEADZONE ) || (event.jaxis.value > DEADZONE)) {
-                            if (invert*event.jaxis.value > 0) { // down
-                                sendPacket(&remote, 16, ((left_max - left_min) * (invert*event.jaxis.value - DEADZONE)) / (JOYSTICK_MAX - DEADZONE) / speed  + left_min);
+                            if (robotstate.invert*event.jaxis.value > 0) { // down
+                                sendPacket(&remote, 16, ((left_max - left_min) * (robotstate.invert*event.jaxis.value - DEADZONE)) / (JOYSTICK_MAX - DEADZONE) / robotstate.speed  + left_min);
                             }
                             else { // up
-                                sendPacket(&remote, 15, ((left_max - left_min) * (invert*-event.jaxis.value - DEADZONE)) / (JOYSTICK_MAX - DEADZONE) / speed  + left_min);
+                                sendPacket(&remote, 15, ((left_max - left_min) * (robotstate.invert*-event.jaxis.value - DEADZONE)) / (JOYSTICK_MAX - DEADZONE) / robotstate.speed  + left_min);
                             }
                         }
                         else {
@@ -339,11 +338,11 @@ int main(){ //int argc, char **argv) {
                     }
                     else if (event.jaxis.axis == 4) { // Right up/down
                         if ((event.jaxis.value < -DEADZONE ) || (event.jaxis.value > DEADZONE)) {
-                            if (invert*event.jaxis.value > 0) { // down
-                                sendPacket(&remote, 26, ((right_max - right_min) * (invert*event.jaxis.value - DEADZONE)) / (JOYSTICK_MAX - DEADZONE) / speed + right_min);
+                            if (robotstate.invert*event.jaxis.value > 0) { // down
+                                sendPacket(&remote, 26, ((right_max - right_min) * (robotstate.invert*event.jaxis.value - DEADZONE)) / (JOYSTICK_MAX - DEADZONE) / robotstate.speed + right_min);
                             }
                             else { // up
-                                sendPacket(&remote, 25, ((right_max - right_min) * (invert*-event.jaxis.value - DEADZONE)) / (JOYSTICK_MAX - DEADZONE) / speed  + right_min);
+                                sendPacket(&remote, 25, ((right_max - right_min) * (robotstate.invert*-event.jaxis.value - DEADZONE)) / (JOYSTICK_MAX - DEADZONE) / robotstate.speed  + right_min);
                             }
                         }
                         else {
