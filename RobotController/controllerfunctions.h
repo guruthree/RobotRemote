@@ -6,9 +6,10 @@
     #include <glib.h>
 #endif
 
+void printTime();
+
 void cleanup();
 void sendPacket(Uint32 command, Uint32 argument);
-void printTime();
 
 
 #ifdef __linux__

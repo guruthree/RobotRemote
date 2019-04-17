@@ -1,4 +1,16 @@
+#include <time.h>
+#include <sys/timeb.h>
+
 #include "controllerfunctions.h"
+
+void printTime() {
+    struct timeb now;
+    char buffer[26];
+    ftime(&now);
+    struct tm *mytime = localtime(&now.time);
+    strftime(buffer, 26, "%H:%M:%S.", mytime);
+    printf("%s%03i ", buffer, now.millitm);
+}
 
 #ifdef __linux__
 

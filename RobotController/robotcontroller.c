@@ -26,8 +26,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 #ifdef __linux__
     #include <glib.h>
 #endif
-#include <time.h>
-#include <sys/timeb.h>
 #include <unistd.h>
 
 #include "../robot.h"
@@ -79,14 +77,6 @@ void sendPacket(Uint32 command, Uint32 argument) {
 //    printf("sending packet %i, %i, %i\n", nextpacket, command, argument);
 }
 
-void printTime() {
-    struct timeb now;
-    char buffer[26];
-    ftime(&now);
-    struct tm *mytime = localtime(&now.time);
-    strftime(buffer, 26, "%H:%M:%S.", mytime);
-    printf("%s%03i ", buffer, now.millitm);
-}
 
 void executeButton(struct buttonDefinition *button) {
     switch (button->type) {
