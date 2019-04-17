@@ -41,8 +41,7 @@ WiFiUDP Udp;
 // Buffer to hold incoming packet
 char packetBuffer[UDP_TX_PACKET_MAX_SIZE];
 // Reply buffer
-#define REPLYBUFFER_LENGTH 48
-char replyBuffer[REPLYBUFFER_LENGTH];
+char replyBuffer[PACKET_LENGTH];
 
 unsigned long nextpacket = 0; // ID of the next outbound packet
 unsigned long lastPacketTime = 0; // time at which the last packet was recieved

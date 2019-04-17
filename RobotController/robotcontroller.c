@@ -129,7 +129,7 @@ int main(){ //int argc, char **argv) {
         fprintf(stderr, "SDLNet_UDP_Open: %s\n", SDLNet_GetError());
         exit(4);
     }
-    remote.packet = SDLNet_AllocPacket(48);
+    remote.packet = SDLNet_AllocPacket(PACKET_LENGTH);
     if (!remote.packet) {
         fprintf(stderr, "SDLNet_AllocPacket: %s\n", SDLNet_GetError());
         exit(5);

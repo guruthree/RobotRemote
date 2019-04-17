@@ -18,6 +18,7 @@
 #define CONTROLLER_TIMEOUT 3000 // timeout in milliseconds of last packet recieved
 #define EMERGENCY_STOP_TIMEOUT 1000 // accept no new packets after an emergency stop for X ms
 #define HEARTBEAT_TIMEOUT 500 // send a heart beat every X ms
+#define PACKET_LENGTH 48 // maximum number of bytes in a packet
 
 // Define motors
 #define NUM_MOTORS 2 // arduino code doesn't use this yet
