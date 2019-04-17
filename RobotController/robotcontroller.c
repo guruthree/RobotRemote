@@ -54,8 +54,23 @@ Uint32 nextpacket = 0;
 unsigned long lastPacketTime = 0;
 
 #ifdef __linux__
-    GKeyFile* gkf;
-    GError *gerror;
+GKeyFile* gkf;
+GError *gerror;
+
+int getIntFromConfig(char *section, char *key, int def) {
+    if (gkf == NULL) {
+        return def;
+    }
+    gerror = NULL;
+    int temp = g_key_file_get_integer(gkf, section, key, &gerror);
+    if (gerror != NULL) {
+        fprintf(stderr, "%s, assuming joystick 0\n",(gerror->message));
+        temp = def;
+        g_error_free(gerror);
+        gerror = NULL;
+    }
+    return temp;
+}
 #endif
 
 enum buttonType {NONE, MACRO, FAST, SLOW, INVERT1, INVERT2, ENABLE, DISABLE, STOP, EXIT};
@@ -222,14 +237,7 @@ int main(){ //int argc, char **argv) {
         exit(2);
     }
 
-    gerror = NULL;
-    joystickID = g_key_file_get_integer(gkf, "controller", "id", &gerror);
-    if (gerror != NULL) {
-        fprintf(stderr, "%s, assuming joystick 0\n",(gerror->message));
-        joystickID = 0;
-        g_error_free(gerror);
-        gerror = NULL;
-    }
+    joystickID = getIntFromConfig("controller", "id", 0);
 #elif __WIN32__
     joystickID = GetPrivateProfileInt("controller", "id", 0, CONFIG_FILE);
 #else
@@ -261,41 +269,10 @@ int main(){ //int argc, char **argv) {
     // setup trim
     int left_min = 0, left_max = MYPWMRANGE, right_min = 0, right_max = MYPWMRANGE;
 #ifdef  __linux__
-    gerror = NULL;
-    left_min = g_key_file_get_integer(gkf, "trim", "left_min", &gerror);
-    if (gerror != NULL) {
-        fprintf(stderr, "%s, assuming left_min=0\n", gerror->message);
-        left_min = 0;
-        g_error_free(gerror);
-        gerror = NULL;
-    }
-
-    gerror = NULL;
-    left_max = g_key_file_get_integer(gkf, "trim", "left_max", &gerror);
-    if (gerror != NULL) {
-        fprintf(stderr, "%s, assuming left_max=%i\n", gerror->message, MYPWMRANGE);
-        left_max = MYPWMRANGE;
-        g_error_free(gerror);
-        gerror = NULL;
-    }
-
-    gerror = NULL;
-    right_min = g_key_file_get_integer(gkf, "trim", "right_min", &gerror);
-    if (gerror != NULL) {
-        fprintf(stderr, "%s, assuming right_min=0\n", gerror->message);
-        right_min = 0;
-        g_error_free(gerror);
-        gerror = NULL;
-    }
-
-    gerror = NULL;
-    right_max = g_key_file_get_integer(gkf, "trim", "right_max", &gerror);
-    if (gerror != NULL) {
-        fprintf(stderr, "%s, assuming right_max=%i\n", gerror->message, MYPWMRANGE);
-        right_max = MYPWMRANGE;
-        g_error_free(gerror);
-        gerror = NULL;
-    }
+    left_min = getIntFromConfig("trim", "left_min", 0);
+    left_max = getIntFromConfig("trim", "left_max", MYPWMRANGE);
+    right_min = getIntFromConfig("trim", "right_min", 0);
+    right_max = getIntFromConfig("trim", "right_max", MYPWMRANGE);
 #elif __WIN32__
     left_min = GetPrivateProfileInt("trim", "left_min", 0, CONFIG_FILE);
     left_max = GetPrivateProfileInt("trim", "left_max", MYPWMRANGE, CONFIG_FILE);
