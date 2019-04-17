@@ -1,4 +1,6 @@
 *.swp
 *~
 *.o
+*.d
+*.Td
 robotcontroller
