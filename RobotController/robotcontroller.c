@@ -65,6 +65,7 @@ int main(){ //int argc, char **argv) {
     // Handle internal quits nicely
     atexit(cleanup);
 
+
     printTime();
 	printf("Initialising...\n");
 
@@ -120,6 +121,7 @@ int main(){ //int argc, char **argv) {
     }
     SDL_JoystickEventState(SDL_ENABLE);
 
+
     // Networking...
     remote.nextpacket = 0;
     remote.lastPacketTime = SDL_GetTicks();
@@ -134,6 +136,7 @@ int main(){ //int argc, char **argv) {
         fprintf(stderr, "SDLNet_AllocPacket: %s\n", SDLNet_GetError());
         exit(5);
     }
+
 
     // setup trim
     int left_min = 0, left_max = MYPWMRANGE, right_min = 0, right_max = MYPWMRANGE;
@@ -245,10 +248,8 @@ int main(){ //int argc, char **argv) {
         up_button.value, down_button.value, left_button.value, right_button.value);
 
 
-
-    SDL_Event event;
-
     // Main loop
+    SDL_Event event;
     int running = 1;
     while (running) {
 
