@@ -35,7 +35,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 SDL_Joystick *joystick;
 UDPremote remote;
-robotState robotstate;
 const char *buttonnames[] = {"a", "b", "x", "y", "lb", "rb", "view", "menu", "xbox", "ls", "rs", "up", "down", "left", "right"};
 
 void cleanup() {
@@ -59,6 +58,7 @@ void cleanup() {
 
 int main(){ //int argc, char **argv) {
     int i;
+    robotState robotstate;
     robotstate.speed = 1;
     robotstate.invert = 1;
 
