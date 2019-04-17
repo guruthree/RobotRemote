@@ -30,17 +30,15 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 #include <sys/timeb.h>
 #include <unistd.h>
 
+#include "../robot.h"
+
 #define JOYSTICK_MAX 32768
 #define DEADZONE (JOYSTICK_MAX/10)
 
 // the relative path here is required for the Windows INI functions
 #define CONFIG_FILE "./config.ini"
 
-#define MYPWMRANGE 255
-
 #define REMOTE_HOST "192.168.4.1"
-#define REMOTE_PORT 7245
-#define HEARTBEAT_TIMEOUT 500
 
 void cleanup();
 void sendPacket(Uint32 command, Uint32 argument);
@@ -254,7 +252,7 @@ int main(){ //int argc, char **argv) {
     SDL_JoystickEventState(SDL_ENABLE);
 
     // Networking...
-    SDLNet_ResolveHost(&remoteAddr, REMOTE_HOST, REMOTE_PORT);
+    SDLNet_ResolveHost(&remoteAddr, REMOTE_HOST, SERVER_PORT);
     udpsocket = SDLNet_UDP_Open(0);
     if (!udpsocket) {
         fprintf(stderr, "SDLNet_UDP_Open: %s\n", SDLNet_GetError());

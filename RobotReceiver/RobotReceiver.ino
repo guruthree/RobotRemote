@@ -17,6 +17,7 @@
 
 #include <ESP8266WiFi.h>
 #include <WiFiUdp.h>
+#include "../robot.h"
 
 //#define DEBUG
 
@@ -28,15 +29,12 @@
 #define R_F D2 // "3A" right motor forwards
 #define R_R D3 // "4A" right motor reverse
 
-// Local PWM range to match what the remote sends
-#define MYPWMRANGE 255
-
 // Set SSID and password for the robot
-const char *ssid = "RobotzRul";
-const char *password = "omglolwut";
+const char *ssid = SSID;
+const char *password = WIFIPASS;
 
 // Server port
-unsigned int localPort = 7245;
+unsigned int localPort = SERVER_PORT;
 
 // UDP support
 WiFiUDP Udp;
@@ -46,12 +44,9 @@ char packetBuffer[UDP_TX_PACKET_MAX_SIZE];
 #define REPLYBUFFER_LENGTH 48
 char replyBuffer[REPLYBUFFER_LENGTH];
 
-// Networking protocol things
-#define CONTROLLER_TIMEOUT 3000 // timeout in milliseconds of last packet recieved
 unsigned long nextpacket = 0; // ID of the next outbound packet
 unsigned long lastPacketTime = 0; // time at which the last packet was recieved
 #define PACKET_LENGTH 12
-#define EMERGENCY_STOP_TIMEOUT 1000 // accept no new packets after an emergency stop for X ms
 unsigned long lastEmergencyStop = 0;
 int stopped = 1;
 

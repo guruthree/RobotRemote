@@ -101,3 +101,10 @@ Each button can be mapped to either a macro, or one of the following commands:
 * Short flash: Locked, connected to remote
 * Slow blink: Unlocked, waiting for commands
 * Rapid flashing: Receiving commands
+
+## Todo
+
+The number of motors is hard coded in RobotReciever. I want to make this flexible with an ENUM array similar to RobotController. I'd also like RobotReciever to send the battery reading back if requested.
+
+In the RobotController I'd like to add the flexibility to actually control those extra motors, with config.ini settings to assign a motor to an axis.
+
