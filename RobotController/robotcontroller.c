@@ -59,7 +59,7 @@ void cleanup() {
 }
 
 
-void executeButton(struct buttonDefinition *button) {
+void executeButton(buttonDefinition *button) {
     switch (button->type) {
         case ENABLE:
             sendPacket(&remote, 10, 0); // enable left motor
@@ -213,12 +213,12 @@ int main(){ //int argc, char **argv) {
 
     // setup button config variables
     // a (0), b (1), x (2), y (3), lb (4), rb (5), view (6), menu (7), xbox (8), ls (9), rs (10), up (11), down (12), left (13), right (14)
-    struct buttonDefinition a_button, b_button, x_button, y_button, \
+    buttonDefinition a_button, b_button, x_button, y_button, \
         lb_button, rb_button, \
         view_button, menu_button, xbox_button, \
         ls_button, rs_button, \
         up_button, down_button, left_button, right_button;
-    struct buttonDefinition *(allbuttons[]) = {&a_button, &b_button, &x_button, &y_button, \
+    buttonDefinition *(allbuttons[]) = {&a_button, &b_button, &x_button, &y_button, \
         &lb_button, &rb_button, \
         &view_button, &menu_button, &xbox_button, \
         &ls_button, &rs_button, \

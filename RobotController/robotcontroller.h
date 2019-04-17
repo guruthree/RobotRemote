@@ -13,12 +13,12 @@
 #define NUM_BUTTONS (11+4)
 
 // things each Xbox controller button can do
-enum buttonType {NONE, MACRO, FAST, SLOW, INVERT1, INVERT2, ENABLE, DISABLE, STOP, EXIT};
-struct buttonDefinition {
+typedef enum {NONE, MACRO, FAST, SLOW, INVERT1, INVERT2, ENABLE, DISABLE, STOP, EXIT} buttonType;
+typedef struct {
     char *value;
-    enum buttonType type; // value from enum buttonType
+    buttonType type; // value from enum buttonType
     int **macro; // [command #][time, forwards/backwards left/right, speed]
     int macrolength; // number of commands in the macro
-};
+} buttonDefinition;
 
 #endif /* _ROBOTCONTROLLER_H_ */

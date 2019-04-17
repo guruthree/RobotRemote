@@ -20,7 +20,7 @@
 
 // Define motors
 #define NUM_MOTORS 2 // arduino code doesn't use this yet
-enum motor {LEFT, RIGHT};
+typedef enum {LEFT, RIGHT} motor;
 const char *motorsnames[] = {"left", "right"};
 
 #endif /* _ROBOT_H_ */
