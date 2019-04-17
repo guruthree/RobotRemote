@@ -223,7 +223,6 @@ int main(){ //int argc, char **argv) {
         &view_button, &menu_button, &xbox_button, \
         &ls_button, &rs_button, \
         &up_button, &down_button, &left_button, &right_button};
-    const char *buttonnames[] = {"a", "b", "x", "y", "lb", "rb", "view", "menu", "xbox", "ls", "rs", "up", "down", "left", "right"};
 
     // read in button config options
 #ifdef  __linux__
