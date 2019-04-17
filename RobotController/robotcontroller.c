@@ -57,8 +57,6 @@ void cleanup() {
 }
 
 
-
-
 int main(){ //int argc, char **argv) {
     int i;
     robotstate.speed = 1;

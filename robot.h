@@ -3,6 +3,7 @@
 #ifndef _ROBOT_H_
 #define _ROBOT_H_ 1
 
+
 // Local PWM range to match what the remote sends
 #define MYPWMRANGE 255
 
@@ -22,5 +23,6 @@
 #define NUM_MOTORS 2 // arduino code doesn't use this yet
 typedef enum {LEFT, RIGHT} motor;
 const char *motorsnames[] = {"left", "right"};
+
 
 #endif /* _ROBOT_H_ */

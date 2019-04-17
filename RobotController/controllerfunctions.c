@@ -4,6 +4,7 @@
 #include "robotcontroller.h"
 #include "controllerfunctions.h"
 
+
 void printTime() {
     struct timeb now;
     char buffer[26];
@@ -84,7 +85,6 @@ void executeButton(UDPremote *remote, robotState *robotstate, buttonDefinition *
 }
 
 #ifdef __linux__
-
 int getIntFromConfig(GKeyFile* gkf, char *section, char *key, int def) {
     if (gkf == NULL) {
         return def;
@@ -98,5 +98,4 @@ int getIntFromConfig(GKeyFile* gkf, char *section, char *key, int def) {
     }
     return temp;
 }
-
 #endif

@@ -1,6 +1,7 @@
 #ifndef _ROBOTCONTROLLER_H_
 #define _ROBOTCONTROLLER_H_ 1
 
+
 #define JOYSTICK_MAX 32768
 #define DEADZONE (JOYSTICK_MAX/10)
 
@@ -26,5 +27,6 @@ typedef struct {
     int speed; // = 1; // 1 - fast, 2 - slow
     int invert; // = 1; // 1 or -1
 } robotState;
+
 
 #endif /* _ROBOTCONTROLLER_H_ */
