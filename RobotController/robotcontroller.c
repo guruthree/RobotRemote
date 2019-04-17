@@ -31,14 +31,9 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 #include <unistd.h>
 
 #include "../robot.h"
+#include "robotcontroller.h"
 
-#define JOYSTICK_MAX 32768
-#define DEADZONE (JOYSTICK_MAX/10)
 
-// the relative path here is required for the Windows INI functions
-#define CONFIG_FILE "./config.ini"
-
-#define REMOTE_HOST "192.168.4.1"
 
 void cleanup();
 void sendPacket(Uint32 command, Uint32 argument);
@@ -71,16 +66,9 @@ int getIntFromConfig(char *section, char *key, int def) {
 }
 #endif
 
-enum buttonType {NONE, MACRO, FAST, SLOW, INVERT1, INVERT2, ENABLE, DISABLE, STOP, EXIT};
-struct buttonDefinition {
-    char *value;
-    enum buttonType type; // value from enum buttonType
-    int **macro; // [command #][time, forwards/backwards left/right, speed]
-    int macrolength; // number of commands in the macro
-};
 
-// the number of buttons on the Xbox controller plus the D-pad directions
-#define NUM_BUTTONS (11+4)
+
+
 
 int speed = 1; // 1 - fast, 2 - slow
 int invert = 1; // 1 or -1
