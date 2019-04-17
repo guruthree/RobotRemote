@@ -42,29 +42,6 @@ UDPpacket *packet;
 Uint32 nextpacket = 0;
 unsigned long lastPacketTime = 0;
 
-#ifdef __linux__
-GKeyFile* gkf;
-GError *gerror;
-
-int getIntFromConfig(char *section, char *key, int def) {
-    if (gkf == NULL) {
-        return def;
-    }
-    gerror = NULL;
-    int temp = g_key_file_get_integer(gkf, section, key, &gerror);
-    if (gerror != NULL) {
-        fprintf(stderr, "%s, assuming joystick 0\n",(gerror->message));
-        temp = def;
-        g_error_free(gerror);
-        gerror = NULL;
-    }
-    return temp;
-}
-#endif
-
-
-
-
 
 int speed = 1; // 1 - fast, 2 - slow
 int invert = 1; // 1 or -1
@@ -81,14 +58,6 @@ void cleanup() {
     udpsocket = NULL;
     if (joystick)
         SDL_JoystickClose(joystick);
-#ifdef __linux__
-    if (gkf)
-        g_key_file_free(gkf);
-    gkf = NULL;
-    if (gerror)
-        g_error_free(gerror);
-    gerror = NULL;
-#endif
     joystick = NULL;
     SDLNet_Quit();
     SDL_Quit();
@@ -210,8 +179,8 @@ int main(){ //int argc, char **argv) {
     // load which joystick from file
     int joystickID = 0;
 #ifdef  __linux__
-    gerror = NULL;
-    gkf = g_key_file_new();
+    GKeyFile* gkf = g_key_file_new();
+    GError *gerror = NULL;
     if (!g_key_file_load_from_file(gkf, CONFIG_FILE, G_KEY_FILE_NONE, &gerror)) {
         fprintf(stderr, "Could not read config file %s, %s\n", CONFIG_FILE, gerror->message);
         g_error_free(gerror);
@@ -219,7 +188,7 @@ int main(){ //int argc, char **argv) {
         exit(2);
     }
 
-    joystickID = getIntFromConfig("controller", "id", 0);
+    joystickID = getIntFromConfig(gkf, "controller", "id", 0);
 #elif __WIN32__
     joystickID = GetPrivateProfileInt("controller", "id", 0, CONFIG_FILE);
 #else
@@ -251,10 +220,10 @@ int main(){ //int argc, char **argv) {
     // setup trim
     int left_min = 0, left_max = MYPWMRANGE, right_min = 0, right_max = MYPWMRANGE;
 #ifdef  __linux__
-    left_min = getIntFromConfig("trim", "left_min", 0);
-    left_max = getIntFromConfig("trim", "left_max", MYPWMRANGE);
-    right_min = getIntFromConfig("trim", "right_min", 0);
-    right_max = getIntFromConfig("trim", "right_max", MYPWMRANGE);
+    left_min = getIntFromConfig(gkf, "trim", "left_min", 0);
+    left_max = getIntFromConfig(gkf, "trim", "left_max", MYPWMRANGE);
+    right_min = getIntFromConfig(gkf, "trim", "right_min", 0);
+    right_max = getIntFromConfig(gkf, "trim", "right_max", MYPWMRANGE);
 #elif __WIN32__
     left_min = GetPrivateProfileInt("trim", "left_min", 0, CONFIG_FILE);
     left_max = GetPrivateProfileInt("trim", "left_max", MYPWMRANGE, CONFIG_FILE);
@@ -295,6 +264,8 @@ int main(){ //int argc, char **argv) {
             gerror = NULL;
         }
     }
+
+    g_key_file_free(gkf);
 #elif __WIN32__
     for (i = 0; i < NUM_BUTTONS; i++) {
         allbuttons[i]->value = (char *)malloc(STRING_BUFFER_LENGTH * sizeof(char));
