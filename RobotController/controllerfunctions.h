@@ -29,4 +29,6 @@ int getIntFromConfig(GKeyFile* gkf, char *section, char *key, int def);
 #endif
 
 
+void copystate(robotState *src, robotState *dest);
+
 #endif /* _CONTROLLERFUNCTIONS_H_ */

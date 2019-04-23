@@ -61,6 +61,11 @@ int main(){ //int argc, char **argv) {
     robotState robotstate;
     robotstate.speed = 1;
     robotstate.invert = 1;
+    robotstate.leftaxis = 0;
+    robotstate.rightaxis = 0;
+
+    robotState laststate;
+    copystate(&robotstate, &laststate);
 
     // Handle internal quits nicely
     atexit(cleanup);
@@ -252,6 +257,7 @@ int main(){ //int argc, char **argv) {
     SDL_Event event;
     int running = 1;
     while (running) {
+        copystate(&robotstate, &laststate);
 
         if (SDL_GetTicks() - remote.lastPacketTime > HEARTBEAT_TIMEOUT) {
             sendPacket(&remote, 0, 0);
@@ -339,6 +345,10 @@ int main(){ //int argc, char **argv) {
                     printTime();
                     break;
             }
+        }
+
+        if (robotstate.speed != laststate.speed) {
+            // update motors to match new speed
         }
    }
 

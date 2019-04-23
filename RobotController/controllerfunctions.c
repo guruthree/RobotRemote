@@ -99,3 +99,10 @@ int getIntFromConfig(GKeyFile* gkf, char *section, char *key, int def) {
     return temp;
 }
 #endif
+
+void copystate(robotState *src, robotState *dest) {
+    dest->speed = src->speed;
+    dest->invert = src->invert;
+    dest->leftaxis = src->leftaxis;
+    dest->rightaxis = src->rightaxis;
+}

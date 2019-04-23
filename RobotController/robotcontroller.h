@@ -26,6 +26,8 @@ extern const char *buttonnames[];
 typedef struct {
     int speed; // = 1; // 1 - fast, 2 - slow
     int invert; // = 1; // 1 or -1
+    int leftaxis;
+    int rightaxis;
 } robotState;
 
 
