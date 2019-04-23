@@ -31,4 +31,6 @@ int getIntFromConfig(GKeyFile* gkf, char *section, char *key, int def);
 
 void copystate(robotState *src, robotState *dest);
 
+void updateMotor(UDPremote *remote, int id, float value, int min, int max);
+
 #endif /* _CONTROLLERFUNCTIONS_H_ */

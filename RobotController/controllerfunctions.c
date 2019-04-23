@@ -106,3 +106,6 @@ void copystate(robotState *src, robotState *dest) {
     dest->leftaxis = src->leftaxis;
     dest->rightaxis = src->rightaxis;
 }
+
+void updateMotor(UDPremote *remote, int id, float value, int min, int max) {
+}

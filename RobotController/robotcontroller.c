@@ -341,16 +341,21 @@ int main(){ //int argc, char **argv) {
             }
         }
 
-        if (robotstate.speed != laststate.speed) {
-            // update motors to match new speed
+        if (robotstate.leftaxis != laststate.leftaxis || robotstate.speed != laststate.speed || robotstate.invert != laststate.invert) {
+            if (robotstate.invert == 1) {
+                updateMotor(&remote, 10, robotstate.leftaxis / robotstate.speed, left_min, left_max);
+            }
+            else {
+                updateMotor(&remote, 20, robotstate.leftaxis / robotstate.speed, right_min, right_max);
+            }
         }
-        if (robotstate.invert != laststate.invert) {
-        }
-        if (robotstate.leftaxis != laststate.leftaxis) {
-            printf("update leftaxis\n");
-        }
-        if (robotstate.rightaxis != laststate.rightaxis) {
-            printf("update rightaxis\n");
+        if (robotstate.rightaxis != laststate.rightaxis || robotstate.speed != laststate.speed || robotstate.invert != laststate.invert) {
+            if (robotstate.invert == 1) {
+                updateMotor(&remote, 20, robotstate.rightaxis / robotstate.speed, right_min, right_max);
+            }
+            else {
+                updateMotor(&remote, 10, robotstate.rightaxis / robotstate.speed, left_min, left_max);
+            }
         }
    }
 
