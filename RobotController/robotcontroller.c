@@ -200,6 +200,8 @@ int main(){ //int argc, char **argv) {
 
     // for each button, read in its macro or set its type appropriately
     for (i = 0; i < NUM_BUTTONS; i++) {
+        allbuttons[i]->macro = NULL;
+
         // start by handling special cases
         if (strcmp(allbuttons[i]->value, "fast") == 0) { //strcmp returns 0 when the strings match
             allbuttons[i]->type = FAST;
@@ -232,6 +234,8 @@ int main(){ //int argc, char **argv) {
                 allbuttons[i]->type = NONE;
             }
             else {
+                // break out to function here
+                allbuttons[i]->type = MACRO;
                 FILE *fid = fopen(allbuttons[i]->value, "r");
                 fclose(fid);
             }

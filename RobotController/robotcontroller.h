@@ -13,13 +13,20 @@
 // the number of buttons on the Xbox controller plus the D-pad directions
 #define NUM_BUTTONS (11+4)
 
+typedef struct {
+    int length;
+    int *times;
+    float *left;
+    float *right;
+    int running;
+} Macro;
+
 // things each Xbox controller button can do
 typedef enum {NONE, MACRO, FAST, SLOW, INVERT1, INVERT2, ENABLE, DISABLE, STOP, EXIT} buttonType;
 typedef struct {
     char *value;
     buttonType type; // value from enum buttonType
-    int **macro; // [command #][time, forwards/backwards left/right, speed]
-    int macrolength; // number of commands in the macro
+    Macro *macro;
 } buttonDefinition;
 extern const char *buttonnames[];
 
