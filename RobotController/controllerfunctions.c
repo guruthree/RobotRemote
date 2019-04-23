@@ -108,4 +108,14 @@ void copystate(robotState *src, robotState *dest) {
 }
 
 void updateMotor(UDPremote *remote, int id, float value, int min, int max) {
+    if (value > 0) {
+        sendPacket(remote, id+5, (int)((max - min) * value + min));
+    }
+    else if (value == 0) {
+        sendPacket(remote, id+5, 0);
+        sendPacket(remote, id+6, 0);
+    }
+    else { // value < 0
+        sendPacket(remote, id+6, (int)((max - min) * -value + min));
+    }
 }
