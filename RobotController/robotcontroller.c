@@ -188,7 +188,7 @@ int main(){ //int argc, char **argv) {
         allbuttons[i]->value = g_key_file_get_value(gkf, "buttons", buttonnames[i], &gerror);
         if (gerror != NULL) {
             fprintf(stderr, "%s, assuming a is unset\n", gerror->message);
-            a_button.value = NULL;
+            allbuttons[i]->value = NULL;
             g_error_free(gerror);
             gerror = NULL;
         }
@@ -205,6 +205,7 @@ int main(){ //int argc, char **argv) {
     // for each button, read in its macro or set its type appropriately
     for (i = 0; i < NUM_BUTTONS; i++) {
         macros[i].length = 0;
+        allbuttons[i]->macro = &macros[i];
 
         // start by handling special cases
         if (strcmp(allbuttons[i]->value, "fast") == 0) { //strcmp returns 0 when the strings match

@@ -44,6 +44,11 @@ void executeButton(UDPremote *remote, robotState *robotstate, const buttonDefini
             break;
 
         case STOP:
+            for (int i = 0; i < NUM_BUTTONS; i++) {
+                if (robotstate->macros[i].length != 0) {
+                    robotstate->macros[i].running = 0;
+                }
+            }
             printf("Interrupting running macros\n");
             break;
 
@@ -75,6 +80,9 @@ void executeButton(UDPremote *remote, robotState *robotstate, const buttonDefini
             break;
 
         case MACRO:
+            if (button->macro->length != 0) {
+                button->macro->running = 1;
+            }
             break;
 
         case NONE:

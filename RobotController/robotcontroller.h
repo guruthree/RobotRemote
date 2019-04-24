@@ -26,6 +26,7 @@ typedef enum {NONE, MACRO, FAST, SLOW, INVERT1, INVERT2, ENABLE, DISABLE, STOP, 
 typedef struct {
     char *value;
     buttonType type; // value from enum buttonType
+    Macro *macro;
 } buttonDefinition;
 extern const char *buttonnames[];
 
