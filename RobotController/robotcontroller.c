@@ -177,6 +177,10 @@ int main(){ //int argc, char **argv) {
         &ls_button, &rs_button, \
         &up_button, &down_button, &left_button, &right_button};
 
+    Macro macros[NUM_BUTTONS];
+    robotstate.macros = &macros[0];
+    laststate.macros = &macros[0];
+
     // read in button config options
 #ifdef  __linux__
     for (i = 0; i < NUM_BUTTONS; i++) {
@@ -200,7 +204,7 @@ int main(){ //int argc, char **argv) {
 
     // for each button, read in its macro or set its type appropriately
     for (i = 0; i < NUM_BUTTONS; i++) {
-        allbuttons[i]->macro = NULL;
+        macros[i].length = 0;
 
         // start by handling special cases
         if (strcmp(allbuttons[i]->value, "fast") == 0) { //strcmp returns 0 when the strings match
