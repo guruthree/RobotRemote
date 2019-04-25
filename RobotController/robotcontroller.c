@@ -204,7 +204,7 @@ int main(){ //int argc, char **argv) {
 
     // for each button, read in its macro or set its type appropriately
     for (i = 0; i < NUM_BUTTONS; i++) {
-        macros[i].length = 0;
+        macros[i].length = -1;
         allbuttons[i]->macro = &macros[i];
 
         // start by handling special cases
@@ -233,16 +233,17 @@ int main(){ //int argc, char **argv) {
             allbuttons[i]->type = NONE;
         }
         else { // read in macro
-        	if (access(allbuttons[i]->value, F_OK) != 0) { // the macro file does not exist!
-                fprintf(stderr, "error reading %s, assuming no function\n", allbuttons[i]->value);
+            if (access(allbuttons[i]->value, F_OK) != 0) { // the macro file does not exist!
+                fprintf(stderr, "file %s doesn't exist, assuming no macro\n", allbuttons[i]->value);
                 allbuttons[i]->value = "";
                 allbuttons[i]->type = NONE;
             }
             else {
-                // break out to function here
                 allbuttons[i]->type = MACRO;
-                FILE *fid = fopen(allbuttons[i]->value, "r");
-                fclose(fid);
+                if (readMacro(allbuttons[i]->value, allbuttons[i]->macro) == 0) {
+                    fprintf(stderr, "formatting error reading macro %s\n", allbuttons[i]->value); 
+                    exit(6);
+                }
             }
         }
     }
@@ -368,5 +369,25 @@ int main(){ //int argc, char **argv) {
         }
    }
 
-	return 0;
+    for (i = 0; i < NUM_BUTTONS; i++) {
+        if (allbuttons[i]->macro->length > 0) {
+            if (allbuttons[i]->macro->times != NULL) {
+                free(allbuttons[i]->macro->times);
+            }
+            if (allbuttons[i]->macro->left != NULL) {
+                free(allbuttons[i]->macro->left);
+            }
+            if (allbuttons[i]->macro->right != NULL) {
+                free(allbuttons[i]->macro->right);
+            }
+        }
+#if __WIN32__
+        if (allbuttons[i]->value != NULL) {
+            free(allbuttons[i]->value);
+        }
+#endif
+    }
+
+
+    return 0;
 }
