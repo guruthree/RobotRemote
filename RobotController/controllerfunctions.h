@@ -23,11 +23,9 @@ void sendPacket(UDPremote *remote, Uint32 command, Uint32 argument);
 
 void executeButton(UDPremote *remote, robotState *robottsate, const buttonDefinition *button);
 
-
 #ifdef __linux__
 int getIntFromConfig(GKeyFile* gkf, char *section, char *key, int def);
 #endif
-
 
 void copystate(robotState *src, robotState *dest);
 

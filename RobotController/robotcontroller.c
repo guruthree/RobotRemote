@@ -367,7 +367,7 @@ int main(){ //int argc, char **argv) {
                 updateMotor(&remote, 10, robotstate.rightaxis / robotstate.speed, left_min, left_max);
             }
         }
-   }
+    }
 
     for (i = 0; i < NUM_BUTTONS; i++) {
         if (allbuttons[i]->macro->length > 0) {
