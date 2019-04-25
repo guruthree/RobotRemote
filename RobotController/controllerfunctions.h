@@ -33,4 +33,6 @@ void copystate(robotState *src, robotState *dest);
 
 void updateMotor(UDPremote *remote, int id, float value, int min, int max);
 
+int readMacro(char filename[], Macro *macro);
+
 #endif /* _CONTROLLERFUNCTIONS_H_ */

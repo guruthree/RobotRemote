@@ -128,3 +128,29 @@ void updateMotor(UDPremote *remote, int id, float value, int min, int max) {
         sendPacket(remote, id+6, (int)((max - min) * -value + min));
     }
 }
+
+int readMacro(char filename[], Macro *macro) {
+    FILE *fid = fopen(filename, "r");
+    int ret = fscanf(fid, "%i", &macro->length);
+    if (ret != 1 || macro->length <= 0) {
+        fclose(fid);
+        return 0;
+    }
+
+    printTime();
+    printf("Reading macro %s, length %i\n", filename, macro->length);
+    macro->times = (int*)malloc(sizeof(int)*macro->length);
+    macro->left = (float*)malloc(sizeof(float)*macro->length);
+    macro->right = (float*)malloc(sizeof(float)*macro->length);
+
+    for (int i = 0; i < macro->length; i++) {
+        ret = fscanf(fid, "%i,%f,%f", &macro->times[i], &macro->left[i], &macro->right[i]);
+        if (ret != 3) {
+            fclose(fid);
+            return 0;
+        }
+    }
+    fclose(fid);
+
+    return 1;
+}
