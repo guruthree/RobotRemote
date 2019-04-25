@@ -72,7 +72,7 @@ int main(){ //int argc, char **argv) {
 
 
     printTime();
-	printf("Initialising...\n");
+    printf("Initialising...\n");
 
     if (SDL_Init( SDL_INIT_JOYSTICK ) < 0) {
         fprintf(stderr, "Couldn't initialize SDL: %s\n", SDL_GetError());
@@ -92,7 +92,7 @@ int main(){ //int argc, char **argv) {
 
     printTime();
     printf("The names of the joysticks are:\n");
-	
+    
     for (i = 0; i < SDL_NumJoysticks(); i++) {
         printTime();
         printf("    (%i) %s\n", i, SDL_JoystickNameForIndex(i));
