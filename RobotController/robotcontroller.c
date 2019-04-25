@@ -58,6 +58,7 @@ void cleanup() {
 
 int main(){ //int argc, char **argv) {
     int i;
+    unsigned long now;
     robotState robotstate;
     robotstate.speed = 1;
     robotstate.invert = 1;
@@ -205,6 +206,7 @@ int main(){ //int argc, char **argv) {
     // for each button, read in its macro or set its type appropriately
     for (i = 0; i < NUM_BUTTONS; i++) {
         macros[i].length = -1;
+        macros[i].running = 0;
         allbuttons[i]->macro = &macros[i];
 
         // start by handling special cases
@@ -351,6 +353,25 @@ int main(){ //int argc, char **argv) {
             }
         }
 
+        now = SDL_GetTicks();
+        for (i = 0; i < NUM_BUTTONS; i++) {
+            if (macros[i].length > 0 && macros[i].running > 0) {
+                if (macros[i].running + macros[i].times[macros[i].at] <= now) {
+                    printTime();
+                    printf("Macro %s command %i (%f, %f)\n", allbuttons[i]->value, macros[i].at, macros[i].left[macros[i].at], macros[i].right[macros[i].at]);
+                    robotstate.leftaxis = macros[i].left[macros[i].at];
+                    robotstate.rightaxis = macros[i].right[macros[i].at];
+                        macros[i].at++;
+                }
+                        
+                if (macros[i].at == macros[i].length) {
+                    printTime();
+                    printf("Macro %s finished\n", allbuttons[i]->value);
+                            macros[i].running = 0;
+                }
+            }
+        }
+    
         if (robotstate.leftaxis != laststate.leftaxis || robotstate.speed != laststate.speed || robotstate.invert != laststate.invert) {
             if (robotstate.invert == 1) {
                 updateMotor(&remote, 10, robotstate.leftaxis / robotstate.speed, left_min, left_max);
@@ -368,6 +389,7 @@ int main(){ //int argc, char **argv) {
             }
         }
     }
+
 
     for (i = 0; i < NUM_BUTTONS; i++) {
         if (allbuttons[i]->macro->length > 0) {

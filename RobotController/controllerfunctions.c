@@ -81,7 +81,9 @@ void executeButton(UDPremote *remote, robotState *robotstate, const buttonDefini
 
         case MACRO:
             if (button->macro->length != 0) {
-                button->macro->running = 1;
+                button->macro->running = SDL_GetTicks();
+                button->macro->at = 0;
+                printf("Macro %s started\n", button->value);
             }
             break;
 
@@ -148,6 +150,9 @@ int readMacro(char filename[], Macro *macro) {
         if (ret != 3) {
             fclose(fid);
             return 0;
+        }
+        if (i > 0) {
+            macro->times[i] += macro->times[i-1];
         }
     }
     fclose(fid);

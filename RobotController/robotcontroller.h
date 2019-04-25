@@ -19,6 +19,7 @@ typedef struct {
     float *left;
     float *right;
     int running;
+    int at;
 } Macro;
 
 // things each Xbox controller button can do
