@@ -350,6 +350,8 @@ int main(){ //int argc, char **argv) {
                 else if (macros[i].at == macros[i].length && now - macros[i].running > macros[i].times[macros[i].at-1]) {
                     printTime();
                     printf("Macro %s finished\n", allbuttons[i]->value);
+                    robotstate.leftaxis = axisvalueconversion(SDL_JoystickGetAxis(joystick, 1));
+                    robotstate.rightaxis = axisvalueconversion(SDL_JoystickGetAxis(joystick, 4));
                     macros[i].running = 0;
                 }
             }

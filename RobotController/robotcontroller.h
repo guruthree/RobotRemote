@@ -2,6 +2,8 @@
 #define _ROBOTCONTROLLER_H_ 1
 
 
+#include <SDL2/SDL.h>
+
 #define JOYSTICK_MAX 32768
 #define DEADZONE (JOYSTICK_MAX/10)
 
@@ -12,6 +14,8 @@
 
 // the number of buttons on the Xbox controller plus the D-pad directions
 #define NUM_BUTTONS (11+4)
+
+extern SDL_Joystick *joystick;
 
 typedef struct {
     int length;
