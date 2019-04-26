@@ -356,18 +356,17 @@ int main(){ //int argc, char **argv) {
         now = SDL_GetTicks();
         for (i = 0; i < NUM_BUTTONS; i++) {
             if (macros[i].length > 0 && macros[i].running > 0) {
-                if (macros[i].running + macros[i].times[macros[i].at] <= now) {
+                if (macros[i].at == 0 || (now - macros[i].running < macros[i].times[macros[i].at] && now - macros[i].running > macros[i].times[macros[i].at-1])) {
                     printTime();
                     printf("Macro %s command %i (%f, %f)\n", allbuttons[i]->value, macros[i].at, macros[i].left[macros[i].at], macros[i].right[macros[i].at]);
                     robotstate.leftaxis = macros[i].left[macros[i].at];
                     robotstate.rightaxis = macros[i].right[macros[i].at];
-                        macros[i].at++;
-                }
-                        
-                if (macros[i].at == macros[i].length) {
+                    macros[i].at++;
+                }                        
+                else if (macros[i].at == macros[i].length && now - macros[i].running > macros[i].times[macros[i].at-1]) {
                     printTime();
                     printf("Macro %s finished\n", allbuttons[i]->value);
-                            macros[i].running = 0;
+                    macros[i].running = 0;
                 }
             }
         }
