@@ -286,26 +286,10 @@ int main(){ //int argc, char **argv) {
             switch(event.type) {
                 case SDL_JOYAXISMOTION:  /* Handle Joystick Motion */
                     if (event.jaxis.axis == 1) { // Left up/down
-                        if (event.jaxis.value < -DEADZONE ) { // up
-                            robotstate.leftaxis = -((float)event.jaxis.value + DEADZONE) / (JOYSTICK_MAX - DEADZONE);
-                        }
-                        else if (event.jaxis.value > DEADZONE) { // down
-                            robotstate.leftaxis = -((float)event.jaxis.value - DEADZONE) / (JOYSTICK_MAX - DEADZONE);
-                        }
-                        else {
-                            robotstate.leftaxis = 0;
-                        }
+                        robotstate.leftaxis = axisvalueconversion(event.jaxis.value);
                     }
                     else if (event.jaxis.axis == 4) { // Right up/down
-                        if (event.jaxis.value < -DEADZONE ) {
-                            robotstate.rightaxis = -((float)event.jaxis.value + DEADZONE) / (JOYSTICK_MAX - DEADZONE);
-                        }
-                        else if (event.jaxis.value > DEADZONE) {
-                            robotstate.rightaxis = -((float)event.jaxis.value - DEADZONE) / (JOYSTICK_MAX - DEADZONE);
-                        }
-                        else {
-                            robotstate.rightaxis = 0;
-                        }
+                        robotstate.rightaxis = axisvalueconversion(event.jaxis.value);
                     }
                     else {
                         if ((event.jaxis.value < -DEADZONE ) || (event.jaxis.value > DEADZONE)) {

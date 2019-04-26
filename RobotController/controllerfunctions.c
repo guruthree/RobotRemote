@@ -159,3 +159,15 @@ int readMacro(char filename[], Macro *macro) {
 
     return 1;
 }
+
+float axisvalueconversion(Sint16 value) {
+    if (value < -DEADZONE ) { // up
+        return -((float)value + DEADZONE) / (JOYSTICK_MAX - DEADZONE);
+    }
+    else if (value > DEADZONE) { // down
+        return -((float)value - DEADZONE) / (JOYSTICK_MAX - DEADZONE);
+    }
+    else {
+        return 0;
+    }
+}

@@ -33,4 +33,6 @@ void updateMotor(UDPremote *remote, int id, float value, int min, int max);
 
 int readMacro(char filename[], Macro *macro);
 
+float axisvalueconversion(Sint16 value);
+
 #endif /* _CONTROLLERFUNCTIONS_H_ */
