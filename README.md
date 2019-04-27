@@ -108,3 +108,4 @@ The number of motors is hard coded in RobotReciever. I want to make this flexibl
 
 In the RobotController I'd like to add the flexibility to actually control those extra motors, with config.ini settings to assign a motor to an axis.
 
+RobotController should possibly quit when the controller is disconnected.
