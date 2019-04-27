@@ -355,14 +355,14 @@ int main(){ //int argc, char **argv) {
         now = SDL_GetTicks();
         for (i = 0; i < NUM_BUTTONS; i++) {
             if (macros[i].length > 0 && macros[i].running > 0) {
-                if (macros[i].at == 0 || (now - macros[i].running < macros[i].times[macros[i].at] && now - macros[i].running > macros[i].times[macros[i].at-1])) {
+                if (macros[i].at == 0 || ((now - macros[i].running < macros[i].times[macros[i].at] && now - macros[i].running > macros[i].times[macros[i].at-1]) && macros[i].at < macros[i].length)) {
                     printTime();
-                    printf("Macro %s command %i (%f, %f)\n", allbuttons[i]->value, macros[i].at, macros[i].left[macros[i].at], macros[i].right[macros[i].at]);
+                    printf("Macro %s command %i/%i (%f, %f)\n", allbuttons[i]->value, macros[i].at+1, macros[i].length, macros[i].left[macros[i].at], macros[i].right[macros[i].at]);
                     robotstate.leftaxis = macros[i].left[macros[i].at];
                     robotstate.rightaxis = macros[i].right[macros[i].at];
                     macros[i].at++;
                 }                        
-                else if (macros[i].at == macros[i].length && now - macros[i].running > macros[i].times[macros[i].at-1]) {
+                else if (now - macros[i].running > macros[i].times[macros[i].at-1]) {
                     printTime();
                     printf("Macro %s finished\n", allbuttons[i]->value);
                     robotstate.leftaxis = axisvalueconversion(SDL_JoystickGetAxis(joystick, 1));
