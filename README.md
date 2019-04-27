@@ -67,7 +67,7 @@ As always, compiling under Windows is a little bit trickier. You can either setu
 * B button: drive upside down
 * LB button: drive slow
 * RB button: drive fast
-* View/Xbox button: exit
+* View/Xbox button: exit (Xbox button cannot be bound under Windows!)
 * Left/right stick button: stop macro
 * D-pad up button: run stophammertime.txt macro
 * Any other button: Lock motors (i.e. emergency stop), unless otherwise specified to be a macro in the configuration file.

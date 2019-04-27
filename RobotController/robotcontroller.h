@@ -13,7 +13,11 @@
 #define REMOTE_HOST "192.168.4.1"
 
 // the number of buttons on the Xbox controller plus the D-pad directions
-#define NUM_BUTTONS (11+4)
+#ifndef __WIN32__
+    #define NUM_BUTTONS (11+4)
+#else // there is no xbox button under windows
+    #define NUM_BUTTONS (10+4)
+#endif
 
 extern SDL_Joystick *joystick;
 

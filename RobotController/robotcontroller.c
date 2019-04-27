@@ -35,7 +35,11 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 SDL_Joystick *joystick;
 UDPremote remote;
-const char *buttonnames[] = {"a", "b", "x", "y", "lb", "rb", "view", "menu", "xbox", "ls", "rs", "up", "down", "left", "right"};
+const char *buttonnames[] = {"a", "b", "x", "y", "lb", "rb", "view", "menu", 
+#ifndef __WIN32__
+    "xbox", 
+#endif
+"ls", "rs", "up", "down", "left", "right"};
 
 void cleanup() {
     printf("Exiting...\n");
@@ -167,15 +171,21 @@ int main(){ //int argc, char **argv) {
 
     // setup button config variables
     // a (0), b (1), x (2), y (3), lb (4), rb (5), view (6), menu (7), xbox (8), ls (9), rs (10), up (11), down (12), left (13), right (14)
-    buttonDefinition a_button, b_button, x_button, y_button, \
-        lb_button, rb_button, \
-        view_button, menu_button, xbox_button, \
-        ls_button, rs_button, \
+    buttonDefinition a_button, b_button, x_button, y_button, 
+        lb_button, rb_button, 
+        view_button, menu_button, 
+#ifndef __WIN32__
+        xbox_button, 
+#endif 
+        ls_button, rs_button, 
         up_button, down_button, left_button, right_button;
-    buttonDefinition *(allbuttons[]) = {&a_button, &b_button, &x_button, &y_button, \
-        &lb_button, &rb_button, \
-        &view_button, &menu_button, &xbox_button, \
-        &ls_button, &rs_button, \
+    buttonDefinition *(allbuttons[]) = {&a_button, &b_button, &x_button, &y_button, 
+        &lb_button, &rb_button, 
+        &view_button, &menu_button, 
+#ifndef __WIN32__
+        &xbox_button, 
+#endif
+        &ls_button, &rs_button, 
         &up_button, &down_button, &left_button, &right_button};
 
     Macro macros[NUM_BUTTONS];
@@ -258,8 +268,13 @@ int main(){ //int argc, char **argv) {
     printf("Using lb=%s, rb=%s, view=%s, menu=%s\n", \
         lb_button.value, rb_button.value, view_button.value, menu_button.value);
     printTime();
+#ifndef __WIN32__
     printf("Using xbox=%s, ls=%s, rs=%s\n", \
         xbox_button.value, ls_button.value, rs_button.value);
+#else
+    printf("Using ls=%s, rs=%s\n", \
+        ls_button.value, rs_button.value);
+#endif
     printTime();
     printf("Using up=%s, down=%s, left=%s, right=%s\n", \
         up_button.value, down_button.value, left_button.value, right_button.value);
