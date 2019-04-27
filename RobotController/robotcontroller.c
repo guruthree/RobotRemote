@@ -200,7 +200,7 @@ int main(){ //int argc, char **argv) {
     for (i = 0; i < NUM_BUTTONS; i++) {
         allbuttons[i]->value = (char *)malloc(STRING_BUFFER_LENGTH * sizeof(char));
         GetPrivateProfileString("buttons", buttonnames[i], "", allbuttons[i]->value, STRING_BUFFER_LENGTH, CONFIG_FILE);
-    });
+    }
 #endif
 
     // for each button, read in its macro or set its type appropriately
