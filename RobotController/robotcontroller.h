@@ -19,6 +19,10 @@
     #define NUM_BUTTONS (10+4)
 #endif
 
+#ifndef MYDATE
+    #define MYDATE "unknown"
+#endif
+
 extern SDL_Joystick *joystick;
 
 typedef struct {
