@@ -36,12 +36,14 @@ void executeButton(UDPremote *remote, robotState *robotstate, const buttonDefini
         case ENABLE:
             sendPacket(remote, 10, 0); // enable left motor
             sendPacket(remote, 20, 0); // enable right motor
+            robotstate->enabled = 1;
             printf("Enabling motors...\n");
             break;
 
         case DISABLE:
             sendPacket(remote, 11, 0); // disable left motor
             sendPacket(remote, 21, 0); // disable right motor
+            robotstate->enabled = 0;
             printf("Disabling motors\n");
             break;
 
@@ -93,6 +95,7 @@ void executeButton(UDPremote *remote, robotState *robotstate, const buttonDefini
 
         case NONE:
             sendPacket(remote, 255, 0); // any other button, stop!
+            robotstate->enabled = 0;
             printf("Assuming emergency stop!\n");
             break;
     }
@@ -117,6 +120,7 @@ int getIntFromConfig(GKeyFile* gkf, char *section, char *key, int def) {
 void copystate(robotState *src, robotState *dest) {
     dest->speed = src->speed;
     dest->invert = src->invert;
+    dest->enabled = src->enabled;
     dest->leftaxis = src->leftaxis;
     dest->rightaxis = src->rightaxis;
     dest->macros = src->macros;

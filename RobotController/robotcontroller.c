@@ -64,8 +64,9 @@ int main(){ //int argc, char **argv) {
     int i;
     unsigned long now;
     robotState robotstate;
-    robotstate.speed = 1;
+    robotstate.speed = 1; // fast
     robotstate.invert = 1;
+    robotstate.enabled = 0;
     robotstate.leftaxis = 0;
     robotstate.rightaxis = 0;
 
