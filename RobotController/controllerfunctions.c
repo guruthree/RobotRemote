@@ -96,7 +96,14 @@ void executeButton(UDPremote *remote, robotState *robotstate, const buttonDefini
         case NONE:
             sendPacket(remote, 255, 0); // any other button, stop!
             robotstate->enabled = 0;
-            printf("Assuming emergency stop!\n");
+            robotstate->leftaxis = 0;
+            robotstate->rightaxis = 0;
+            for (int i = 0; i < NUM_BUTTONS; i++) {
+                if (robotstate->macros[i].length != 0) {
+                    robotstate->macros[i].running = 0;
+                }
+            }
+            printf("Assuming emergency stop! Disabling & stopping motors and macros.\n");
             break;
     }
 }
