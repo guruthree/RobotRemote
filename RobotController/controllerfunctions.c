@@ -87,9 +87,14 @@ void executeButton(UDPremote *remote, robotState *robotstate, const buttonDefini
 
         case MACRO:
             if (button->macro->length != 0) {
-                button->macro->running = SDL_GetTicks();
-                button->macro->at = 0;
-                printf("Macro %s started\n", button->value);
+                if (robotstate->enabled == 1) {
+                    button->macro->running = SDL_GetTicks();
+                    button->macro->at = 0;
+                    printf("Macro %s started\n", button->value);
+                }
+                else {
+                    printf("Macro %s would have been started, but motors disabled\n", button->value);
+                }
             }
             break;
 
