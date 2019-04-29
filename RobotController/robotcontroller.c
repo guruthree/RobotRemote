@@ -170,6 +170,19 @@ int main(){ //int argc, char **argv) {
     printf("Using trim config left_min=%i, left_max=%i, right_min=%i, right_max=%i\n", left_min, left_max, right_min, right_max);
 
 
+    // read in motor directions
+    int left_dir = 1, right_dir = 1;
+#ifdef  __linux__
+    left_dir = getIntFromConfig(gkf, "dir", "left", 1);
+    right_dir = getIntFromConfig(gkf, "dir", "right", 1);
+#elif __WIN32__
+    left_dir = GetPrivateProfileInt("dir", "left", 1, CONFIG_FILE);
+    right_dir = GetPrivateProfileInt("dir", "right", 1, CONFIG_FILE);
+#endif
+    if (left_dir != -1 || left_dir != 1) left_dir = 1;
+    if (right_dir != -1 || right_dir != 1) right_dir = 1;
+
+
     // setup button config variables
     // a (0), b (1), x (2), y (3), lb (4), rb (5), view (6), menu (7), xbox (8), ls (9), rs (10), up (11), down (12), left (13), right (14)
     buttonDefinition a_button, b_button, x_button, y_button, 
