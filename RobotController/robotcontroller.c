@@ -19,7 +19,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 #ifdef __WIN32__
     #define SDL_MAIN_HANDLED
     #include <windows.h>
-    #define STRING_BUFFER_LENGTH 32
 #endif
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_net.h>
@@ -166,24 +165,34 @@ int main(){ //int argc, char **argv) {
 
 
     // setup trim
-    int left_min = 0, left_max = MYPWMRANGE, right_min = 0, right_max = MYPWMRANGE;
+    int trim_min[MAX_NUM_MOTORS], trim_max[MAX_NUM_MOTORS];
+    char *keyname = (char *)malloc(STRING_BUFFER_LENGTH * sizeof(char));
+    char *keyname2 = (char *)malloc(STRING_BUFFER_LENGTH * sizeof(char));
+    for (i = 0; i < MAX_NUM_MOTORS; i++) {
+        snprintf(keyname, STRING_BUFFER_LENGTH, "%s_min", motornames[i]);
+        snprintf(keyname2, STRING_BUFFER_LENGTH, "%s_max", motornames[i]);
 #ifdef  __linux__
-    left_min = getIntFromConfig(gkf, "trim", "left_min", 0);
-    left_max = getIntFromConfig(gkf, "trim", "left_max", MYPWMRANGE);
-    right_min = getIntFromConfig(gkf, "trim", "right_min", 0);
-    right_max = getIntFromConfig(gkf, "trim", "right_max", MYPWMRANGE);
+        trim_min[i] = getIntFromConfig(gkf, "trim", keyname, 0);
+        trim_max[i] = getIntFromConfig(gkf, "trim", keyname2, MYPWMRANGE);
 #elif __WIN32__
-    left_min = GetPrivateProfileInt("trim", "left_min", 0, CONFIG_FILE);
-    left_max = GetPrivateProfileInt("trim", "left_max", MYPWMRANGE, CONFIG_FILE);
-    right_min = GetPrivateProfileInt("trim", "right_min", 0, CONFIG_FILE);
-    right_max = GetPrivateProfileInt("trim", "right_max", MYPWMRANGE, CONFIG_FILE);
+        trim_min[i] = GetPrivateProfileInt("trim", keyname, 0, CONFIG_FILE);
+        trim_max[i] = GetPrivateProfileInt("trim", keyname2, MYPWMRANGE, CONFIG_FILE);
 #endif
-    if (left_min < 0) left_min = 0;
-    if (left_max > MYPWMRANGE) left_max = MYPWMRANGE;
-    if (right_min < 0) right_min = 0;
-    if (right_max > MYPWMRANGE) right_max = MYPWMRANGE;
+        if (trim_min[i] < 0) trim_min[i] = 0;
+        if (trim_max[i] > MYPWMRANGE) trim_max[i] = MYPWMRANGE;
+    }
+    free(keyname);
+    free(keyname2);
+
     printTime();
-    printf("Using trim config left_min=%i, left_max=%i, right_min=%i, right_max=%i\n", left_min, left_max, right_min, right_max);
+    printf("Using ");
+    for (i = 0; i < MAX_NUM_MOTORS; i++) {
+        if (i > 0) {
+            printf(", ");
+        }
+        printf("%s_min = %i, %s_max = %i", motornames[i], trim_min[i], motornames[i], trim_max[i]);
+    }
+    printf("\n");
 
 
     // read in motor directions
@@ -401,18 +410,18 @@ int main(){ //int argc, char **argv) {
         if (robotstate.enabled == 1) {    
             if (robotstate.axis[LEFT] != laststate.axis[LEFT] || robotstate.speed != laststate.speed || robotstate.invert != laststate.invert) {
                 if (robotstate.invert == 1) {
-                    updateMotor(&remote, 10, robotstate.axis[LEFT] / robotstate.speed, left_min, left_max, left_dir);
+                    updateMotor(&remote, 10, robotstate.axis[LEFT] / robotstate.speed, trim_min[LEFT], trim_max[LEFT], left_dir);
                 }
                 else {
-                    updateMotor(&remote, 20, -robotstate.axis[LEFT] / robotstate.speed, right_min, right_max, right_dir);
+                    updateMotor(&remote, 20, -robotstate.axis[LEFT] / robotstate.speed, trim_min[RIGHT], trim_max[RIGHT], right_dir);
                 }
             }
             if (robotstate.axis[RIGHT] != laststate.axis[RIGHT] || robotstate.speed != laststate.speed || robotstate.invert != laststate.invert) {
                 if (robotstate.invert == 1) {
-                    updateMotor(&remote, 20, robotstate.axis[RIGHT] / robotstate.speed, right_min, right_max, right_dir);
+                    updateMotor(&remote, 20, robotstate.axis[RIGHT] / robotstate.speed, trim_min[RIGHT], trim_max[RIGHT], right_dir);
                 }
                 else {
-                    updateMotor(&remote, 10, -robotstate.axis[RIGHT] / robotstate.speed, left_min, left_max, left_dir);
+                    updateMotor(&remote, 10, -robotstate.axis[RIGHT] / robotstate.speed, trim_min[LEFT], trim_max[LEFT], left_dir);
                 }
             }
         }

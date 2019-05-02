@@ -23,7 +23,7 @@
 // Define motors
 #define MAX_NUM_MOTORS 5 // arduino code doesn't use this yet
 typedef enum {LEFT, RIGHT, MOTOR2, MOTOR3, MOTOR4} motor;
-static char *motorsnames[] = {"left", "right", "motor2", "motor3", "motor4"};
+static char *motornames[] = {"left", "right", "motor2", "motor3", "motor4"};
 
 
 #endif /* _ROBOT_H_ */

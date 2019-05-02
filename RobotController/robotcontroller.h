@@ -9,6 +9,7 @@
 
 // the relative path here is required for the Windows INI functions
 #define CONFIG_FILE "./config.ini"
+#define STRING_BUFFER_LENGTH 32
 
 #define REMOTE_HOST "192.168.4.1"
 
