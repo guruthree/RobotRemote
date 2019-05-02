@@ -74,13 +74,17 @@ As always, compiling under Windows is a little bit trickier. You can either setu
 
 ## RobotController configuration file
 
-RobotController has a configuration file, `config.ini`. It contains four sections, `[controller]`, `[trim]`, `[dir]`, and `[buttons]`. The `[controller]` section has one key, `id`, which can be used to specify an alternate joystick. The `[trim]` has four keys, the combinations of left/right_min/max, which can be used to adjust the minimum and maximum speeds for each motor. This should be useful if going full forwards on both joysticks doesn't actually make the robot go quite in a straight line. `[dir]` has two keys, `left_dir` and `right_dir`. When each key is set to 1 the motor direction is default, and when set to -1, the motor direction is reversed.
+RobotController has a configuration file, `config.ini`. It contains five sections, which are outlined below.
 
-The last section `[buttons]` can be used to add macros to each button. Macros are specified in `*.txt` files that on the first line contains the number of entries, follow a comma separated list of time offsets and motor speeds. Pressing the defined button will send the predefined sequence of network packets at the specified intervals.
+* `[controller]`, which contains the key `id` that can be used to specify an alternate joystick.
+* `[network]` has two keys, `remote_host` and `server_port` for connecting to the specified receiver.
+* `[trim]` has four keys, the combinations of left/right_min/max, which can be used to adjust the minimum and maximum speeds for each motor. This should be useful if going full forwards on both joysticks doesn't actually make the robot go quite in a straight line. 
+* `[dir]` has two keys, `left_dir` and `right_dir`. When each key is set to 1 the motor direction is default, and when set to -1, the motor direction is reversed.
+* `[buttons]` can be used to specify what each button does, either a command from the list below or a macro. Macros are specified in `*.txt` files that on the first line contains the number of entries, follow a comma separated list of time offsets and motor speeds. Pressing the defined button will send the predefined sequence of motor commands at the specified intervals.
 
 Note, under Windows `;` will be treated as the comment indicator, while under Linux `#` will be the comment indicator.
 
-### Button configuration
+### Button commands
 
 Each button can be mapped to either a macro, or one of the following commands:
 
