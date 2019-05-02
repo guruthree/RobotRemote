@@ -134,9 +134,25 @@ int main(){ //int argc, char **argv) {
 
 
     // Networking...
+    char *remote_host;
+    int server_port;
+#ifdef  __linux__
+    remote_host = getStringFromConfig(gkf, "network", "remote_host", REMOTE_HOST);
+    server_port = getIntFromConfig(gkf, "network", "server_port", SERVER_PORT);
+#elif __WIN32__
+    remote_host = (char *)malloc(STRING_BUFFER_LENGTH * sizeof(char));
+    GetPrivateProfileString("network", "remote_host", REMOTE_HOST, remote_host, STRING_BUFFER_LENGTH, CONFIG_FILE);
+    server_port = GetPrivateProfileInt("network", "server_port", SERVER_PORT, CONFIG_FILE);
+#endif
+    if (server_port < 0 || server_port > 65534) {
+        server_port = SERVER_PORT;
+    }
+    printTime();
+    printf("Connecting to %s:%i\n", remote_host, server_port);
+
     remote.nextpacket = 0;
     remote.lastPacketTime = SDL_GetTicks();
-    SDLNet_ResolveHost(&remote.remoteAddr, REMOTE_HOST, SERVER_PORT);
+    SDLNet_ResolveHost(&remote.remoteAddr, remote_host, server_port);
     remote.udpsocket = SDLNet_UDP_Open(0);
     if (!remote.udpsocket) {
         fprintf(stderr, "SDLNet_UDP_Open: %s\n", SDLNet_GetError());

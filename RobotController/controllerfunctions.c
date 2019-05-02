@@ -128,7 +128,7 @@ int getIntFromConfig(GKeyFile* gkf, const char *section, const char *key, const 
     return temp;
 }
 
-const char* getStringFromConfig(GKeyFile* gkf, const char *section, const char *key, char *def) {
+char* getStringFromConfig(GKeyFile* gkf, const char *section, const char *key, char *def) {
     if (gkf == NULL) {
         return def;
     }

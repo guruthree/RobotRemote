@@ -25,7 +25,7 @@ void executeButton(UDPremote *remote, robotState *robottsate, const buttonDefini
 
 #ifdef __linux__
 int getIntFromConfig(GKeyFile* gkf, const char *section, const char *key, const int def);
-const char* getStringFromConfig(GKeyFile* gkf, const char *section, const char *key, char *def);
+char* getStringFromConfig(GKeyFile* gkf, const char *section, const char *key, char *def);
 #endif
 
 void copystate(robotState *src, robotState *dest);
