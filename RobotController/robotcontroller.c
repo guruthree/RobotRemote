@@ -409,6 +409,8 @@ int main(){ //int argc, char **argv) {
         }
     }
 
+    // we're quitting, stop everything!
+    sendPacket(&remote, 255, 0);
 
     for (i = 0; i < NUM_BUTTONS; i++) {
         if (allbuttons[i]->macro->length > 0) {
