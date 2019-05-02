@@ -121,7 +121,7 @@ int getIntFromConfig(GKeyFile* gkf, const char *section, const char *key, const 
     GError *gerror = NULL;
     int temp = g_key_file_get_integer(gkf, section, key, &gerror);
     if (gerror != NULL) {
-        fprintf(stderr, "%s, assuming [%s] %s value %i\n", gerror->message, section, key, def);
+//        fprintf(stderr, "%s, assuming [%s] %s value %i\n", gerror->message, section, key, def);
         temp = def;
         g_error_free(gerror);
     }
@@ -135,7 +135,7 @@ char* getStringFromConfig(GKeyFile* gkf, const char *section, const char *key, c
     GError *gerror = NULL;
     char* temp = g_key_file_get_value(gkf, section, key, &gerror);
     if (gerror != NULL) {
-        fprintf(stderr, "%s, assuming [%s] %s value %s\n", (gerror->message), section, key, def);
+//        fprintf(stderr, "%s, assuming [%s] %s value %s\n", (gerror->message), section, key, def);
         temp = def;
         g_error_free(gerror);
     }
