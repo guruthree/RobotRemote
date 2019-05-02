@@ -173,14 +173,16 @@ int main(){ //int argc, char **argv) {
     // read in motor directions
     int left_dir = 1, right_dir = 1;
 #ifdef  __linux__
-    left_dir = getIntFromConfig(gkf, "dir", "left", 1);
-    right_dir = getIntFromConfig(gkf, "dir", "right", 1);
+    left_dir = getIntFromConfig(gkf, "dir", "left_dir", 1);
+    right_dir = getIntFromConfig(gkf, "dir", "right_dir", 1);
 #elif __WIN32__
-    left_dir = GetPrivateProfileInt("dir", "left", 1, CONFIG_FILE);
-    right_dir = GetPrivateProfileInt("dir", "right", 1, CONFIG_FILE);
+    left_dir = GetPrivateProfileInt("dir", "left_dir", 1, CONFIG_FILE);
+    right_dir = GetPrivateProfileInt("dir", "right_dir", 1, CONFIG_FILE);
 #endif
-    if (left_dir != -1 || left_dir != 1) left_dir = 1;
-    if (right_dir != -1 || right_dir != 1) right_dir = 1;
+    if (left_dir != -1 && left_dir != 1) left_dir = 1;
+    if (right_dir != -1 && right_dir != 1) right_dir = 1;
+    printTime();
+    printf("Using dir config left_dir=%i, right_dir=%i\n", left_dir, right_dir);
 
 
     // setup button config variables
