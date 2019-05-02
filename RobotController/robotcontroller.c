@@ -211,17 +211,10 @@ int main(){ //int argc, char **argv) {
     // read in button config options
 #ifdef  __linux__
     for (i = 0; i < NUM_BUTTONS; i++) {
-        gerror = NULL;
-        allbuttons[i]->value = g_key_file_get_value(gkf, "buttons", buttonnames[i], &gerror);
-        if (gerror != NULL) {
-            fprintf(stderr, "%s, assuming a is unset\n", gerror->message);
-            allbuttons[i]->value = NULL;
-            g_error_free(gerror);
-            gerror = NULL;
-        }
+        allbuttons[i]->value = getStringFromConfig(gkf, "buttons", buttonnames[i], NULL);
     }
 
-    g_key_file_free(gkf);
+    g_key_file_free(gkf); // this is the last config we need to read, so close it
 #elif __WIN32__
     for (i = 0; i < NUM_BUTTONS; i++) {
         allbuttons[i]->value = (char *)malloc(STRING_BUFFER_LENGTH * sizeof(char));

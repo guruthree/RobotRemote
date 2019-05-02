@@ -114,14 +114,28 @@ void executeButton(UDPremote *remote, robotState *robotstate, const buttonDefini
 }
 
 #ifdef __linux__
-int getIntFromConfig(GKeyFile* gkf, char *section, char *key, int def) {
+int getIntFromConfig(GKeyFile* gkf, const char *section, const char *key, const int def) {
     if (gkf == NULL) {
         return def;
     }
     GError *gerror = NULL;
     int temp = g_key_file_get_integer(gkf, section, key, &gerror);
     if (gerror != NULL) {
-        fprintf(stderr, "%s, assuming joystick 0\n",(gerror->message));
+        fprintf(stderr, "%s, assuming [%s] %s value %i\n", gerror->message, section, key, def);
+        temp = def;
+        g_error_free(gerror);
+    }
+    return temp;
+}
+
+const char* getStringFromConfig(GKeyFile* gkf, const char *section, const char *key, char *def) {
+    if (gkf == NULL) {
+        return def;
+    }
+    GError *gerror = NULL;
+    char* temp = g_key_file_get_value(gkf, section, key, &gerror);
+    if (gerror != NULL) {
+        fprintf(stderr, "%s, assuming [%s] %s value %s\n", (gerror->message), section, key, def);
         temp = def;
         g_error_free(gerror);
     }
