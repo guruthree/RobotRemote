@@ -21,9 +21,9 @@
 #define PACKET_LENGTH 48 // maximum number of bytes in a packet
 
 // Define motors
-#define NUM_MOTORS 2 // arduino code doesn't use this yet
-typedef enum {LEFT, RIGHT} motor;
-const char *motorsnames[] = {"left", "right"};
+#define MAX_NUM_MOTORS 5 // arduino code doesn't use this yet
+typedef enum {LEFT, RIGHT, MOTOR2, MOTOR3, MOTOR4} motor;
+static char *motorsnames[] = {"left", "right", "motor2", "motor3", "motor4"};
 
 
 #endif /* _ROBOT_H_ */

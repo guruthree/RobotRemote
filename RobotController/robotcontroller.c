@@ -67,9 +67,9 @@ int main(){ //int argc, char **argv) {
     robotstate.speed = 1; // fast
     robotstate.invert = 1;
     robotstate.enabled = 0;
-    robotstate.leftaxis = 0;
-    robotstate.rightaxis = 0;
-
+    for (i = 0; i < MAX_NUM_MOTORS; i++) {
+        robotstate.axis[i] = 0;
+    }
     robotState laststate;
     copystate(&robotstate, &laststate);
 
@@ -326,10 +326,10 @@ int main(){ //int argc, char **argv) {
             switch(event.type) {
                 case SDL_JOYAXISMOTION:  /* Handle Joystick Motion */
                     if (event.jaxis.axis == 1) { // Left up/down
-                        robotstate.leftaxis = axisvalueconversion(event.jaxis.value);
+                        robotstate.axis[LEFT] = axisvalueconversion(event.jaxis.value);
                     }
                     else if (event.jaxis.axis == 4) { // Right up/down
-                        robotstate.rightaxis = axisvalueconversion(event.jaxis.value);
+                        robotstate.axis[RIGHT] = axisvalueconversion(event.jaxis.value);
                     }
                     else {
                         if ((event.jaxis.value < -DEADZONE ) || (event.jaxis.value > DEADZONE)) {
@@ -383,15 +383,15 @@ int main(){ //int argc, char **argv) {
                 if (macros[i].at == 0 || ((now - macros[i].running < macros[i].times[macros[i].at] && now - macros[i].running > macros[i].times[macros[i].at-1]) && macros[i].at < macros[i].length)) {
                     printTime();
                     printf("Macro %s command %i/%i (%f, %f)\n", allbuttons[i]->value, macros[i].at+1, macros[i].length, macros[i].left[macros[i].at], macros[i].right[macros[i].at]);
-                    robotstate.leftaxis = macros[i].left[macros[i].at];
-                    robotstate.rightaxis = macros[i].right[macros[i].at];
+                    robotstate.axis[LEFT] = macros[i].left[macros[i].at];
+                    robotstate.axis[RIGHT] = macros[i].right[macros[i].at];
                     macros[i].at++;
                 }                        
                 else if (now - macros[i].running > macros[i].times[macros[i].at-1]) {
                     printTime();
                     printf("Macro %s finished\n", allbuttons[i]->value);
-                    robotstate.leftaxis = axisvalueconversion(SDL_JoystickGetAxis(joystick, 1));
-                    robotstate.rightaxis = axisvalueconversion(SDL_JoystickGetAxis(joystick, 4));
+                    robotstate.axis[LEFT] = axisvalueconversion(SDL_JoystickGetAxis(joystick, 1));
+                    robotstate.axis[RIGHT] = axisvalueconversion(SDL_JoystickGetAxis(joystick, 4));
                     macros[i].running = 0;
                 }
             }
@@ -399,20 +399,20 @@ int main(){ //int argc, char **argv) {
 
 
         if (robotstate.enabled == 1) {    
-            if (robotstate.leftaxis != laststate.leftaxis || robotstate.speed != laststate.speed || robotstate.invert != laststate.invert) {
+            if (robotstate.axis[LEFT] != laststate.axis[LEFT] || robotstate.speed != laststate.speed || robotstate.invert != laststate.invert) {
                 if (robotstate.invert == 1) {
-                    updateMotor(&remote, 10, robotstate.leftaxis / robotstate.speed, left_min, left_max, left_dir);
+                    updateMotor(&remote, 10, robotstate.axis[LEFT] / robotstate.speed, left_min, left_max, left_dir);
                 }
                 else {
-                    updateMotor(&remote, 20, -robotstate.leftaxis / robotstate.speed, right_min, right_max, right_dir);
+                    updateMotor(&remote, 20, -robotstate.axis[LEFT] / robotstate.speed, right_min, right_max, right_dir);
                 }
             }
-            if (robotstate.rightaxis != laststate.rightaxis || robotstate.speed != laststate.speed || robotstate.invert != laststate.invert) {
+            if (robotstate.axis[RIGHT] != laststate.axis[RIGHT] || robotstate.speed != laststate.speed || robotstate.invert != laststate.invert) {
                 if (robotstate.invert == 1) {
-                    updateMotor(&remote, 20, robotstate.rightaxis / robotstate.speed, right_min, right_max, right_dir);
+                    updateMotor(&remote, 20, robotstate.axis[RIGHT] / robotstate.speed, right_min, right_max, right_dir);
                 }
                 else {
-                    updateMotor(&remote, 10, -robotstate.rightaxis / robotstate.speed, left_min, left_max, left_dir);
+                    updateMotor(&remote, 10, -robotstate.axis[RIGHT] / robotstate.speed, left_min, left_max, left_dir);
                 }
             }
         }

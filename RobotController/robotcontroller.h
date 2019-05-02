@@ -1,7 +1,7 @@
 #ifndef _ROBOTCONTROLLER_H_
 #define _ROBOTCONTROLLER_H_ 1
 
-
+#include "../robot.h"
 #include <SDL2/SDL.h>
 
 #define JOYSTICK_MAX 32768
@@ -47,8 +47,7 @@ typedef struct {
     int speed; // = 1; // 1 - fast, 2 - slow
     int invert; // = 1; // 1 or -1
     int enabled;
-    float leftaxis;
-    float rightaxis;
+    float axis[MAX_NUM_MOTORS];
     Macro *macros;
 } robotState;
 
