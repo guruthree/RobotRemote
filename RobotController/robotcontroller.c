@@ -148,7 +148,7 @@ int main(){ //int argc, char **argv) {
         server_port = SERVER_PORT;
     }
     printTime();
-    printf("Connecting to %s:%i\n", remote_host, server_port);
+    printf("Sending to %s:%i\n", remote_host, server_port);
 
     remote.nextpacket = 0;
     remote.lastPacketTime = SDL_GetTicks();
