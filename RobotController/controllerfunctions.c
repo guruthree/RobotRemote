@@ -34,15 +34,17 @@ void sendPacket(UDPremote *remote, Uint32 command, Uint32 argument) {
 void executeButton(UDPremote *remote, robotState *robotstate, const buttonDefinition *button) {
     switch (button->type) {
         case ENABLE:
-            sendPacket(remote, 10, 0); // enable left motor
-            sendPacket(remote, 20, 0); // enable right motor
+            for (int i = 0; i < MAX_NUM_MOTORS; i++) {
+                sendPacket(remote, (i+1)*10, 0); // enable (motor IDs start at 0, but packets start at 10)
+            }
             robotstate->enabled = 1;
             printf("Enabling motors...\n");
             break;
 
         case DISABLE:
-            sendPacket(remote, 11, 0); // disable left motor
-            sendPacket(remote, 21, 0); // disable right motor
+            for (int i = 0; i < MAX_NUM_MOTORS; i++) {
+                sendPacket(remote, (i+1)*10+1, 0); // disable motor
+            }
             robotstate->enabled = 0;
             printf("Disabling motors\n");
             break;
