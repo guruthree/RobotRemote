@@ -62,13 +62,16 @@ void cleanup() {
 int main(){ //int argc, char **argv) {
     int i;
     unsigned long now;
+    int axismap[MAX_NUM_MOTORS];
     robotState robotstate;
     robotstate.speed = 1; // fast
     robotstate.invert = 1;
     robotstate.enabled = 0;
     for (i = 0; i < MAX_NUM_MOTORS; i++) {
         robotstate.axis[i] = 0;
+        axismap[i] = -1;
     }
+    robotstate.axismap = axismap;
     robotState laststate;
     copystate(&robotstate, &laststate);
 
@@ -232,6 +235,30 @@ int main(){ //int argc, char **argv) {
             printf(", ");
         }
         printf("%s_dir=%i", motornames[i], axis_dir[i]);
+    }
+    printf("\n");
+
+
+    // read in axis mapping
+    keyname = (char *)malloc(STRING_BUFFER_LENGTH * sizeof(char));
+    for (i = 0; i < numMotors; i++) {
+        snprintf(keyname, STRING_BUFFER_LENGTH, "%s_axis", motornames[i]);
+#ifdef  __linux__
+        axismap[i] = getIntFromConfig(gkf, "axis", keyname, -1);
+#elif __WIN32__
+        axismap[i] = GetPrivateProfileInt("axis", keyname, -1, CONFIG_FILE);
+#endif
+        if (axismap[i] < 0 || axismap[i] > 5) axismap[i] = -1;
+    }
+    free(keyname);
+
+    printTime();
+    printf("Using axis mapping ");
+    for (i = 0; i < numMotors; i++) {
+        if (i > 0) {
+            printf(", ");
+        }
+        printf("%s_axis=%i", motornames[i], axismap[i]);
     }
     printf("\n");
 
