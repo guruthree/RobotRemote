@@ -1,7 +1,6 @@
 #ifndef _ROBOTCONTROLLER_H_
 #define _ROBOTCONTROLLER_H_ 1
 
-#include "../robot.h"
 #include <SDL2/SDL.h>
 
 #define JOYSTICK_MAX 32768
@@ -28,7 +27,7 @@ extern SDL_Joystick *joystick;
 
 typedef struct {
     int length;
-    int *times;
+    unsigned long *times;
 //    float *left;
 //    float *right;
     float *velocities[MAX_NUM_MOTORS];

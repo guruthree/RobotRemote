@@ -3,9 +3,15 @@
 #include <time.h>
 #include <sys/timeb.h>
 
+#include "../robot.h"
 #include "robotcontroller.h"
 #include "controllerfunctions.h"
 
+#ifdef DEBUG // so that we can get around debug compile error for defined but not used
+char** getMotorNames() {
+    return motornames;
+}
+#endif
 
 void printTime() {
     struct timeb now;
