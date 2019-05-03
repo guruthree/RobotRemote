@@ -60,7 +60,7 @@ void cleanup() {
 
 
 int main(){ //int argc, char **argv) {
-    int i;
+    int i, j;
     unsigned long now;
     int axismap[MAX_NUM_MOTORS];
     robotState robotstate;
@@ -339,7 +339,7 @@ int main(){ //int argc, char **argv) {
             }
             else {
                 allbuttons[i]->type = MACRO;
-                if (readMacro(allbuttons[i]->value, allbuttons[i]->macro) == 0) {
+                if (readMacro(allbuttons[i]->value, allbuttons[i]->macro, numMotors) == 0) {
                     fprintf(stderr, "formatting error reading macro %s\n", allbuttons[i]->value); 
                     exit(6);
                 }
@@ -438,9 +438,19 @@ int main(){ //int argc, char **argv) {
             if (macros[i].length > 0 && macros[i].running > 0) {
                 if (macros[i].at == 0 || ((now - macros[i].running < macros[i].times[macros[i].at] && now - macros[i].running > macros[i].times[macros[i].at-1]) && macros[i].at < macros[i].length)) {
                     printTime();
-                    printf("Macro %s command %i/%i (%f, %f)\n", allbuttons[i]->value, macros[i].at+1, macros[i].length, macros[i].left[macros[i].at], macros[i].right[macros[i].at]);
-                    robotstate.axis[LEFT] = macros[i].left[macros[i].at];
-                    robotstate.axis[RIGHT] = macros[i].right[macros[i].at];
+                    printf("Macro %s command %i/%i (", allbuttons[i]->value, macros[i].at+1, macros[i].length);
+                    for (j = 0; j < numMotors; j++) {
+                        if (j > 0) {
+                            printf(", ");
+                        }
+                        printf("%f", macros[i].velocities[j][macros[i].at]);
+                    }
+                    printf(")\n");
+//                    robotstate.axis[LEFT] = macros[i].left[macros[i].at];
+//                    robotstate.axis[RIGHT] = macros[i].right[macros[i].at];
+                    for (j = 0; j < numMotors; j++) {
+                        robotstate.axis[j] = macros[i].velocities[j][macros[i].at];
+                    }
                     macros[i].at++;
                 }                        
                 else if (now - macros[i].running > macros[i].times[macros[i].at-1]) {
@@ -483,11 +493,10 @@ int main(){ //int argc, char **argv) {
             if (allbuttons[i]->macro->times != NULL) {
                 free(allbuttons[i]->macro->times);
             }
-            if (allbuttons[i]->macro->left != NULL) {
-                free(allbuttons[i]->macro->left);
-            }
-            if (allbuttons[i]->macro->right != NULL) {
-                free(allbuttons[i]->macro->right);
+            for (j = 0; j < numMotors; j++) {
+                if (allbuttons[i]->macro->velocities[i] != NULL) {
+                    free(allbuttons[i]->macro->velocities[i]);
+                }
             }
         }
 #if __WIN32__

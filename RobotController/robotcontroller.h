@@ -29,8 +29,9 @@ extern SDL_Joystick *joystick;
 typedef struct {
     int length;
     int *times;
-    float *left;
-    float *right;
+//    float *left;
+//    float *right;
+    float *velocities[MAX_NUM_MOTORS];
     int running;
     int at;
 } Macro;
