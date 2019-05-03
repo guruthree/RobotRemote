@@ -196,18 +196,28 @@ int main(){ //int argc, char **argv) {
 
 
     // read in motor directions
-    int left_dir = 1, right_dir = 1;
+    int axis_dir[MAX_NUM_MOTORS];
+    keyname = (char *)malloc(STRING_BUFFER_LENGTH * sizeof(char));
+    for (i = 0; i < MAX_NUM_MOTORS; i++) {
+        snprintf(keyname, STRING_BUFFER_LENGTH, "%s_dir", motornames[i]);
 #ifdef  __linux__
-    left_dir = getIntFromConfig(gkf, "dir", "left_dir", 1);
-    right_dir = getIntFromConfig(gkf, "dir", "right_dir", 1);
+        axis_dir[i] = getIntFromConfig(gkf, "trim", keyname, 1);
 #elif __WIN32__
-    left_dir = GetPrivateProfileInt("dir", "left_dir", 1, CONFIG_FILE);
-    right_dir = GetPrivateProfileInt("dir", "right_dir", 1, CONFIG_FILE);
+        axis_dir[i] = GetPrivateProfileInt("trim", keyname, 1, CONFIG_FILE);
 #endif
-    if (left_dir != -1 && left_dir != 1) left_dir = 1;
-    if (right_dir != -1 && right_dir != 1) right_dir = 1;
+        if (axis_dir[i] != -1 && axis_dir[i] != 1) axis_dir[i] = 1;
+    }
+    free(keyname);
+
     printTime();
-    printf("Using dir config left_dir=%i, right_dir=%i\n", left_dir, right_dir);
+    printf("Using dir config ");
+    for (i = 0; i < MAX_NUM_MOTORS; i++) {
+        if (i > 0) {
+            printf(", ");
+        }
+        printf("%s_dir=%i", motornames[i], axis_dir[i]);
+    }
+    printf("\n");
 
 
     // setup button config variables
@@ -410,18 +420,18 @@ int main(){ //int argc, char **argv) {
         if (robotstate.enabled == 1) {    
             if (robotstate.axis[LEFT] != laststate.axis[LEFT] || robotstate.speed != laststate.speed || robotstate.invert != laststate.invert) {
                 if (robotstate.invert == 1) {
-                    updateMotor(&remote, 10, robotstate.axis[LEFT] / robotstate.speed, trim_min[LEFT], trim_max[LEFT], left_dir);
+                    updateMotor(&remote, 10, robotstate.axis[LEFT] / robotstate.speed, trim_min[LEFT], trim_max[LEFT], axis_dir[LEFT]);
                 }
                 else {
-                    updateMotor(&remote, 20, -robotstate.axis[LEFT] / robotstate.speed, trim_min[RIGHT], trim_max[RIGHT], right_dir);
+                    updateMotor(&remote, 20, -robotstate.axis[LEFT] / robotstate.speed, trim_min[RIGHT], trim_max[RIGHT], axis_dir[RIGHT]);
                 }
             }
             if (robotstate.axis[RIGHT] != laststate.axis[RIGHT] || robotstate.speed != laststate.speed || robotstate.invert != laststate.invert) {
                 if (robotstate.invert == 1) {
-                    updateMotor(&remote, 20, robotstate.axis[RIGHT] / robotstate.speed, trim_min[RIGHT], trim_max[RIGHT], right_dir);
+                    updateMotor(&remote, 20, robotstate.axis[RIGHT] / robotstate.speed, trim_min[RIGHT], trim_max[RIGHT], axis_dir[RIGHT]);
                 }
                 else {
-                    updateMotor(&remote, 10, -robotstate.axis[RIGHT] / robotstate.speed, trim_min[LEFT], trim_max[LEFT], left_dir);
+                    updateMotor(&remote, 10, -robotstate.axis[RIGHT] / robotstate.speed, trim_min[LEFT], trim_max[LEFT], axis_dir[LEFT]);
                 }
             }
         }
