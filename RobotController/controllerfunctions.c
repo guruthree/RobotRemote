@@ -55,8 +55,9 @@ void executeButton(UDPremote *remote, robotState *robotstate, const buttonDefini
                     robotstate->macros[i].running = 0;
                 }
             }
-            robotstate->axis[LEFT] = axisvalueconversion(SDL_JoystickGetAxis(joystick, 1));
-            robotstate->axis[RIGHT] = axisvalueconversion(SDL_JoystickGetAxis(joystick, 4));
+            for (int i = 0; i < robotstate->numMotors; i++) {
+                robotstate->axis[i] = axisvalueconversion(SDL_JoystickGetAxis(joystick, robotstate->axismap[i]));
+            }
             printf("Interrupting running macros\n");
             break;
 

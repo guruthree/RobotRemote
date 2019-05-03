@@ -387,15 +387,9 @@ int main(){ //int argc, char **argv) {
         while(SDL_PollEvent(&event) != 0) {
             switch(event.type) {
                 case SDL_JOYAXISMOTION:  /* Handle Joystick Motion */
-                    if (event.jaxis.axis == 1) { // Left up/down
-                        robotstate.axis[LEFT] = axisvalueconversion(event.jaxis.value);
-                    }
-                    else if (event.jaxis.axis == 4) { // Right up/down
-                        robotstate.axis[RIGHT] = axisvalueconversion(event.jaxis.value);
-                    }
-                    else {
-                        if ((event.jaxis.value < -DEADZONE ) || (event.jaxis.value > DEADZONE)) {
-//                            printf("axis: %i value: %i\n", event.jaxis.axis, event.jaxis.value);
+                    for (i = 0; i < numMotors; i++) {
+                        if (event.jaxis.axis == axismap[i]) {
+                            robotstate.axis[i] = axisvalueconversion(event.jaxis.value);
                         }
                     }
                     break;
@@ -452,8 +446,9 @@ int main(){ //int argc, char **argv) {
                 else if (now - macros[i].running > macros[i].times[macros[i].at-1]) {
                     printTime();
                     printf("Macro %s finished\n", allbuttons[i]->value);
-                    robotstate.axis[LEFT] = axisvalueconversion(SDL_JoystickGetAxis(joystick, 1));
-                    robotstate.axis[RIGHT] = axisvalueconversion(SDL_JoystickGetAxis(joystick, 4));
+                    for (i = 0; i < numMotors; i++) {
+                        robotstate.axis[i] = axisvalueconversion(SDL_JoystickGetAxis(joystick, axismap[i]));
+                    }
                     macros[i].running = 0;
                 }
             }
