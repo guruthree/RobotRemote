@@ -179,7 +179,7 @@ void updateMotor(UDPremote *remote, int id, float value, int min, int max, int d
     }
 }
 
-int readMacro(char filename[], Macro *macro) {
+int readMacro(char filename[], Macro *macro, int numMotors) {
     FILE *fid = fopen(filename, "r");
     int ret = fscanf(fid, "%i", &macro->length);
     if (ret != 1 || macro->length <= 0) {
@@ -189,15 +189,23 @@ int readMacro(char filename[], Macro *macro) {
 
     printTime();
     printf("Reading macro %s, length %i\n", filename, macro->length);
-    macro->times = (int*)malloc(sizeof(int)*macro->length);
-    macro->left = (float*)malloc(sizeof(float)*macro->length);
-    macro->right = (float*)malloc(sizeof(float)*macro->length);
+    macro->times = (unsigned long*)malloc(sizeof(int)*macro->length);
+    for (int i = 0; i < numMotors; i++) {
+        macro->velocities[i] = (float*)malloc(sizeof(float)*macro->length);
+    }
 
     for (int i = 0; i < macro->length; i++) {
-        ret = fscanf(fid, "%i,%f,%f", &macro->times[i], &macro->left[i], &macro->right[i]);
-        if (ret != 3) {
+        ret = fscanf(fid, "%li", &macro->times[i]);
+        if (ret != 1) {
             fclose(fid);
             return 0;
+        }
+        for (int j = 0; j < numMotors; j++) {
+            ret = fscanf(fid, ",%f", &macro->velocities[j][i]);
+            if (ret != 1) {
+                fclose(fid);
+                return 0;
+            }
         }
         if (i > 0) {
             macro->times[i] += macro->times[i-1];
