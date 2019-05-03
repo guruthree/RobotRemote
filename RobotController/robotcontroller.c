@@ -164,11 +164,27 @@ int main(){ //int argc, char **argv) {
     }
 
 
+    // read in robot configurations
+    int numMotors = 2;
+#ifdef  __linux__
+    numMotors = getIntFromConfig(gkf, "robot", "num_motors", 2);
+#elif __WIN32__
+    numMotors = GetPrivateProfileInt("robot", "num_motors", 2, CONFIG_FILE);
+#endif
+    if (numMotors < 0 || numMotors > MAX_NUM_MOTORS) {
+        numMotors = SERVER_PORT;
+    }
+    printTime();
+    printf("Using %i motors\n", numMotors);
+    robotstate.numMotors = numMotors;
+    laststate.numMotors = numMotors;
+
+
     // setup trim
     int trim_min[MAX_NUM_MOTORS], trim_max[MAX_NUM_MOTORS];
     char *keyname = (char *)malloc(STRING_BUFFER_LENGTH * sizeof(char));
     char *keyname2 = (char *)malloc(STRING_BUFFER_LENGTH * sizeof(char));
-    for (i = 0; i < MAX_NUM_MOTORS; i++) {
+    for (i = 0; i < numMotors; i++) {
         snprintf(keyname, STRING_BUFFER_LENGTH, "%s_min", motornames[i]);
         snprintf(keyname2, STRING_BUFFER_LENGTH, "%s_max", motornames[i]);
 #ifdef  __linux__
@@ -186,7 +202,7 @@ int main(){ //int argc, char **argv) {
 
     printTime();
     printf("Using ");
-    for (i = 0; i < MAX_NUM_MOTORS; i++) {
+    for (i = 0; i < numMotors; i++) {
         if (i > 0) {
             printf(", ");
         }
@@ -198,7 +214,7 @@ int main(){ //int argc, char **argv) {
     // read in motor directions
     int axis_dir[MAX_NUM_MOTORS];
     keyname = (char *)malloc(STRING_BUFFER_LENGTH * sizeof(char));
-    for (i = 0; i < MAX_NUM_MOTORS; i++) {
+    for (i = 0; i < numMotors; i++) {
         snprintf(keyname, STRING_BUFFER_LENGTH, "%s_dir", motornames[i]);
 #ifdef  __linux__
         axis_dir[i] = getIntFromConfig(gkf, "trim", keyname, 1);
@@ -211,7 +227,7 @@ int main(){ //int argc, char **argv) {
 
     printTime();
     printf("Using dir config ");
-    for (i = 0; i < MAX_NUM_MOTORS; i++) {
+    for (i = 0; i < numMotors; i++) {
         if (i > 0) {
             printf(", ");
         }

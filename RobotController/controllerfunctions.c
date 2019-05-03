@@ -34,7 +34,7 @@ void sendPacket(UDPremote *remote, Uint32 command, Uint32 argument) {
 void executeButton(UDPremote *remote, robotState *robotstate, const buttonDefinition *button) {
     switch (button->type) {
         case ENABLE:
-            for (int i = 0; i < MAX_NUM_MOTORS; i++) {
+            for (int i = 0; i < robotstate->numMotors; i++) {
                 sendPacket(remote, (i+1)*10, 0); // enable (motor IDs start at 0, but packets start at 10)
             }
             robotstate->enabled = 1;
@@ -42,7 +42,7 @@ void executeButton(UDPremote *remote, robotState *robotstate, const buttonDefini
             break;
 
         case DISABLE:
-            for (int i = 0; i < MAX_NUM_MOTORS; i++) {
+            for (int i = 0; i < robotstate->numMotors; i++) {
                 sendPacket(remote, (i+1)*10+1, 0); // disable motor
             }
             robotstate->enabled = 0;
@@ -103,7 +103,7 @@ void executeButton(UDPremote *remote, robotState *robotstate, const buttonDefini
         case NONE:
             sendPacket(remote, 255, 0); // any other button, stop!
             robotstate->enabled = 0;
-            for (int i = 0; i < MAX_NUM_MOTORS; i++) {
+            for (int i = 0; i < robotstate->numMotors; i++) {
                 robotstate->axis[i] = 0;
             }
             for (int i = 0; i < NUM_BUTTONS; i++) {
@@ -150,10 +150,12 @@ void copystate(robotState *src, robotState *dest) {
     dest->speed = src->speed;
     dest->invert = src->invert;
     dest->enabled = src->enabled;
-    for (int i = 0; i < MAX_NUM_MOTORS; i++) {
+    for (int i = 0; i < dest->numMotors; i++) {
         dest->axis[i] = src->axis[i];
     }
     dest->macros = src->macros;
+    dest->axismap = src->axismap;
+    dest->numMotors = src->numMotors;
 }
 
 void updateMotor(UDPremote *remote, int id, float value, int min, int max, int dir) {

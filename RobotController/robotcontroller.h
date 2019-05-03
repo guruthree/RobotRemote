@@ -50,6 +50,8 @@ typedef struct {
     int enabled;
     float axis[MAX_NUM_MOTORS];
     Macro *macros;
+    int *axismap;
+    int numMotors;
 } robotState;
 
 
