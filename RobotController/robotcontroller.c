@@ -456,8 +456,8 @@ int main(){ //int argc, char **argv) {
                 else if (now - macros[i].running > macros[i].times[macros[i].at-1]) {
                     printTime();
                     printf("Macro %s finished\n", allbuttons[i]->value);
-                    for (i = 0; i < numMotors; i++) {
-                        robotstate.axis[i] = axisvalueconversion(SDL_JoystickGetAxis(joystick, axismap[i]));
+                    for (j = 0; j < numMotors; j++) {
+                        robotstate.axis[j] = axisvalueconversion(SDL_JoystickGetAxis(joystick, axismap[j]));
                     }
                     macros[i].running = 0;
                 }
@@ -494,8 +494,8 @@ int main(){ //int argc, char **argv) {
                 free(allbuttons[i]->macro->times);
             }
             for (j = 0; j < numMotors; j++) {
-                if (allbuttons[i]->macro->velocities[i] != NULL) {
-                    free(allbuttons[i]->macro->velocities[i]);
+                if (allbuttons[i]->macro->velocities[j] != NULL) {
+                    free(allbuttons[i]->macro->velocities[j]);
                 }
             }
         }
