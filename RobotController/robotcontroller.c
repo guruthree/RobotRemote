@@ -250,7 +250,7 @@ int main(){ //int argc, char **argv) {
 #elif __WIN32__
         axismap[i] = GetPrivateProfileInt("axis", keyname, -1, CONFIG_FILE);
 #endif
-        if (axismap[i] < 0 || axismap[i] > 6) axismap[i] = -1;
+        if (axismap[i] < 0 || axismap[i] > SDL_JoystickNumAxes(joystick)) axismap[i] = -1;
     }
     free(keyname);
 
