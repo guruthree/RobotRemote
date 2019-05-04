@@ -451,6 +451,10 @@ int main(){ //int argc, char **argv) {
                     }
                     break;
 
+                case SDL_JOYDEVICEREMOVED:
+                    printTime();
+                    printf("Joystick removed!\n");
+
                 case SDL_QUIT:
                     running = 0;
                     printTime();
