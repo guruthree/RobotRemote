@@ -376,6 +376,8 @@ int main(){ //int argc, char **argv) {
     while (running) {
         copystate(&robotstate, &laststate);
 
+
+        // heart beat
         if (SDL_GetTicks() - remote.lastPacketTime > HEARTBEAT_TIMEOUT) {
             sendPacket(&remote, 0, 0);
 //            printf("Sending heartbeat (%d)!\n", nextpacket);
@@ -405,6 +407,8 @@ int main(){ //int argc, char **argv) {
             printf("Packet recieved...\n");
         }
 
+
+        // handle input
         while(SDL_PollEvent(&event) != 0) {
             switch(event.type) {
                 case SDL_JOYAXISMOTION:  /* Handle Joystick Motion */
@@ -456,6 +460,8 @@ int main(){ //int argc, char **argv) {
             last_input = SDL_GetTicks();
         }
 
+
+        // execute macros
         now = SDL_GetTicks();
         for (i = 0; i < NUM_BUTTONS; i++) {
             if (macros[i].length > 0 && macros[i].running > 0) {
@@ -469,8 +475,7 @@ int main(){ //int argc, char **argv) {
                         printf("%f", macros[i].velocities[j][macros[i].at]);
                     }
                     printf(")\n");
-//                    robotstate.axis[LEFT] = macros[i].left[macros[i].at];
-//                    robotstate.axis[RIGHT] = macros[i].right[macros[i].at];
+
                     for (j = 0; j < numMotors; j++) {
                         robotstate.axis[j] = macros[i].velocities[j][macros[i].at];
                     }
@@ -488,6 +493,7 @@ int main(){ //int argc, char **argv) {
         }
 
 
+        // send commands to the robot
         if (robotstate.enabled == 1) {
             for (i = 0; i < numMotors; i++) {
                 if (robotstate.axis[i] != laststate.axis[i] || robotstate.speed != laststate.speed || robotstate.invert != laststate.invert) {
@@ -507,6 +513,7 @@ int main(){ //int argc, char **argv) {
             }
         }
     }
+
 
     // we're quitting, stop everything!
     sendPacket(&remote, 255, 0);
