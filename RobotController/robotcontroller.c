@@ -60,7 +60,7 @@ void cleanup() {
 
 
 int main(){ //int argc, char **argv) {
-    int i, j;
+    int i, j, k;
     unsigned long now;
     int axismap[MAX_NUM_MOTORS];
     robotState robotstate;
@@ -220,9 +220,9 @@ int main(){ //int argc, char **argv) {
     for (i = 0; i < numMotors; i++) {
         snprintf(keyname, STRING_BUFFER_LENGTH, "%s_dir", motornames[i]);
 #ifdef  __linux__
-        axis_dir[i] = getIntFromConfig(gkf, "trim", keyname, 1);
+        axis_dir[i] = getIntFromConfig(gkf, "dir", keyname, 1);
 #elif __WIN32__
-        axis_dir[i] = GetPrivateProfileInt("trim", keyname, 1, CONFIG_FILE);
+        axis_dir[i] = GetPrivateProfileInt("dir", keyname, 1, CONFIG_FILE);
 #endif
         if (axis_dir[i] != -1 && axis_dir[i] != 1) axis_dir[i] = 1;
     }
@@ -465,21 +465,21 @@ int main(){ //int argc, char **argv) {
         }
 
 
-        if (robotstate.enabled == 1) {    
-            if (robotstate.axis[LEFT] != laststate.axis[LEFT] || robotstate.speed != laststate.speed || robotstate.invert != laststate.invert) {
-                if (robotstate.invert == 1) {
-                    updateMotor(&remote, 10, robotstate.axis[LEFT] / robotstate.speed, trim_min[LEFT], trim_max[LEFT], axis_dir[LEFT]);
-                }
-                else {
-                    updateMotor(&remote, 20, -robotstate.axis[LEFT] / robotstate.speed, trim_min[RIGHT], trim_max[RIGHT], axis_dir[RIGHT]);
-                }
-            }
-            if (robotstate.axis[RIGHT] != laststate.axis[RIGHT] || robotstate.speed != laststate.speed || robotstate.invert != laststate.invert) {
-                if (robotstate.invert == 1) {
-                    updateMotor(&remote, 20, robotstate.axis[RIGHT] / robotstate.speed, trim_min[RIGHT], trim_max[RIGHT], axis_dir[RIGHT]);
-                }
-                else {
-                    updateMotor(&remote, 10, -robotstate.axis[RIGHT] / robotstate.speed, trim_min[LEFT], trim_max[LEFT], axis_dir[LEFT]);
+        if (robotstate.enabled == 1) {
+            for (i = 0; i < numMotors; i++) {
+                if (robotstate.axis[i] != laststate.axis[i] || robotstate.speed != laststate.speed || robotstate.invert != laststate.invert) {
+                    j = i;
+                    k = 1;
+                    if (robotstate.invert == 1) {
+                        k = -1;
+                        if (j == 1) {
+                            j = 0;
+                        }
+                        else {
+                            j = 1;
+                        }
+                    }
+                    updateMotor(&remote, (j+1)*10, k * robotstate.axis[i] / robotstate.speed, trim_min[j], trim_max[j], axis_dir[j]);
                 }
             }
         }
