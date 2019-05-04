@@ -84,14 +84,14 @@ void executeButton(UDPremote *remote, robotState *robotstate, const buttonDefini
             printf("Slowing down\n");
             break;
 
-        case INVERT1:
-            robotstate->invert = 1;
-            printf("Invert 1\n");
+        case INVERTOFF:
+            robotstate->invert = 0;
+            printf("Invert Off\n");
             break;
 
-        case INVERT2:
-            robotstate->invert = -1;
-            printf("Invert 2\n");
+        case INVERTON:
+            robotstate->invert = 1;
+            printf("Invert On\n");
             break;
 
         case MACRO:

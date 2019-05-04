@@ -36,7 +36,7 @@ typedef struct {
 } Macro;
 
 // things each Xbox controller button can do
-typedef enum {NONE, MACRO, FAST, SLOW, INVERT1, INVERT2, ENABLE, DISABLE, STOP, EXIT} buttonType;
+typedef enum {NONE, MACRO, FAST, SLOW, INVERTOFF, INVERTON, ENABLE, DISABLE, STOP, EXIT} buttonType;
 typedef struct {
     char *value;
     buttonType type; // value from enum buttonType
@@ -46,7 +46,7 @@ extern const char *buttonnames[];
 
 typedef struct {
     int speed; // = 1; // 1 - fast, 2 - slow
-    int invert; // = 1; // 1 or -1
+    int invert; // = 0; // 1 or 0 (do it or don't)
     int enabled;
     float axis[MAX_NUM_MOTORS];
     Macro *macros;

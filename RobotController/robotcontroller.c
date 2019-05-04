@@ -65,7 +65,7 @@ int main(){ //int argc, char **argv) {
     int axismap[MAX_NUM_MOTORS];
     robotState robotstate;
     robotstate.speed = 1; // fast
-    robotstate.invert = 1;
+    robotstate.invert = 0;
     robotstate.enabled = 0;
     for (i = 0; i < MAX_NUM_MOTORS; i++) {
         robotstate.axis[i] = 0;
@@ -313,11 +313,11 @@ int main(){ //int argc, char **argv) {
         else if (strcmp(allbuttons[i]->value, "slow") == 0) {
             allbuttons[i]->type = SLOW;
         }
-        else if (strcmp(allbuttons[i]->value, "invert1") == 0) {
-            allbuttons[i]->type = INVERT1;
+        else if (strcmp(allbuttons[i]->value, "invertoff") == 0) {
+            allbuttons[i]->type = INVERTOFF;
         }
-        else if (strcmp(allbuttons[i]->value, "invert2") == 0) {
-            allbuttons[i]->type = INVERT2;
+        else if (strcmp(allbuttons[i]->value, "inverton") == 0) {
+            allbuttons[i]->type = INVERTON;
         }
         else if (strcmp(allbuttons[i]->value, "enable") == 0) {
             allbuttons[i]->type = ENABLE;
