@@ -168,17 +168,19 @@ int main(){ //int argc, char **argv) {
 
 
     // read in robot configurations
-    int numMotors = 2;
+    int numMotors = 2; unsigned long idle_timeout;
 #ifdef  __linux__
     numMotors = getIntFromConfig(gkf, "robot", "num_motors", 2);
+    idle_timeout = getIntFromConfig(gkf, "robot", "idle_timeout", 120)*1000;
 #elif __WIN32__
     numMotors = GetPrivateProfileInt("robot", "num_motors", 2, CONFIG_FILE);
+    idle_timeout = GetPrivateProfileInt("robot", "idle_timeout", 120, CONFIG_FILE)*1000;
 #endif
     if (numMotors < 0 || numMotors > MAX_NUM_MOTORS) {
         numMotors = SERVER_PORT;
     }
     printTime();
-    printf("Using %i motors\n", numMotors);
+    printf("Using %i motors, becoming idle after %li s\n", numMotors, idle_timeout/1000);
     robotstate.numMotors = numMotors;
     laststate.numMotors = numMotors;
 
@@ -370,6 +372,7 @@ int main(){ //int argc, char **argv) {
     // Main loop
     SDL_Event event;
     int running = 1;
+    unsigned long last_input = 0;
     while (running) {
         copystate(&robotstate, &laststate);
 
@@ -377,6 +380,24 @@ int main(){ //int argc, char **argv) {
             sendPacket(&remote, 0, 0);
 //            printf("Sending heartbeat (%d)!\n", nextpacket);
         }
+
+
+        // idle time out
+        if (SDL_GetTicks() - last_input > idle_timeout && robotstate.enabled == 1) {
+            sendPacket(&remote, 255, 0); // any other button, stop!
+            robotstate.enabled = 0;
+            for (int i = 0; i < robotstate.numMotors; i++) {
+                robotstate.axis[i] = 0;
+            }
+            for (int i = 0; i < NUM_BUTTONS; i++) {
+                if (robotstate.macros[i].length != 0) {
+                    robotstate.macros[i].running = 0;
+                }
+            }
+            printTime();
+            printf("Idle after %li seconds, stopping motors...\n", idle_timeout/1000);
+        }
+
 
         // recieve all waiting packets
         while (SDLNet_UDP_Recv(remote.udpsocket, remote.packet) == 1) {
@@ -431,6 +452,8 @@ int main(){ //int argc, char **argv) {
                     printTime();
                     break;
             }
+
+            last_input = SDL_GetTicks();
         }
 
         now = SDL_GetTicks();
