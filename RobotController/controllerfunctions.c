@@ -157,7 +157,7 @@ void copystate(robotState *src, robotState *dest) {
     dest->speed = src->speed;
     dest->invert = src->invert;
     dest->enabled = src->enabled;
-    for (int i = 0; i < dest->numMotors; i++) {
+    for (int i = 0; i < src->numMotors; i++) {
         dest->axis[i] = src->axis[i];
     }
     dest->macros = src->macros;

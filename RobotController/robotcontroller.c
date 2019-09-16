@@ -67,6 +67,7 @@ int main(){ //int argc, char **argv) {
     robotstate.speed = 1; // fast
     robotstate.invert = 0;
     robotstate.enabled = 0;
+    robotstate.numMotors = 0; // this will be overwritten later
     for (i = 0; i < MAX_NUM_MOTORS; i++) {
         robotstate.axis[i] = 0;
         axismap[i] = -1;
