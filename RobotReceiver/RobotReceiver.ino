@@ -58,6 +58,7 @@ unsigned long lastBatteryCheck = 0;
 void(*resetFunc) (void) = 0; // https://www.instructables.com/id/two-ways-to-reset-arduino-in-software/
 
 int LEDstate = HIGH;
+unsigned long ledFlip = 0;
 void setLED(int instate) {
   LEDstate = instate;
   //digitalWrite(LED_BUILTIN, LEDstate);
@@ -81,7 +82,9 @@ void emergencyStop() {
   digitalWrite(R_R, LOW);
 
   lastEmergencyStop = millis();
-  setLED(HIGH);
+  if (stopped != 1) {
+    setLED(HIGH);
+  }
   stopped = 1;
 #ifdef DEBUG
   Serial.println("Emergency stopped.");
@@ -313,6 +316,8 @@ void loop() {
 
   // check the battery level
   if (millis() - lastBatteryCheck > BATTERY_CHECK_FREQUENCY) {
+    setLED(!LEDstate);
+    ledFlip = millis() + 200;
     float voltage = analogRead(A0);
     //float voltage = 183;
     voltage = voltage / 1024 * 3.25;
@@ -335,6 +340,15 @@ void loop() {
     }
     
     lastBatteryCheck = millis();
+  }
+  
+  // delayed flip of the LED state again
+  if (ledFlip != 0 && millis() > ledFlip) {
+#ifdef DEBUG
+    Serial.println("LED flip");
+#endif
+     ledFlip = 0;
+    setLED(!LEDstate);
   }
 
 }
