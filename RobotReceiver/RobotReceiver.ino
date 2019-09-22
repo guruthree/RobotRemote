@@ -255,6 +255,9 @@ void loop() {
   // if there's data available, read a packet
   int packetSize = Udp.parsePacket();
   if (packetSize) {
+#ifdef DEBUG
+    Serial.println("Packet recieved");
+#endif
     lastPacketTime = millis();
     // Flash LED to show recieved
     setLED(!LEDstate);
