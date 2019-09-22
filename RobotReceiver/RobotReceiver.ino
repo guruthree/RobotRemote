@@ -127,7 +127,7 @@ void rightReverse(unsigned long velocity) {
 // Send a packet
 void sendPacket(unsigned long command, unsigned long argument) {
   // Make sure reply packet is blank
-  memset(replyBuffer, 0, REPLYBUFFER_LENGTH);
+  memset(replyBuffer, 0, PACKET_LENGTH);
 
   // Make so we can maniuplate as unsigned long
   unsigned long* longReplyBuffer = (unsigned long*)replyBuffer;
